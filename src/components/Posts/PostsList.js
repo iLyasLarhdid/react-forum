@@ -6,7 +6,7 @@ import properties from "../../properties";
 const ForumDetails = () =>{
     const {id} = useParams();
     const {host} = properties;
-    const url = `http://${host}/api/v1/posts/forum/id/${id}`;
+    const url = `${host}/api/v1/posts/forum/id/${id}`;
     const {data,isPending} = useFetch(url);
     return (
     <div className="container">

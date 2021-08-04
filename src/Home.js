@@ -11,7 +11,7 @@ const Home = ()=>{
     if(!cookie.cyberpunk)
         history.push("/login");
 
-    const url = `http://${host}/api/v1/forums`;
+    const url = `${host}/api/v1/forums`;
     const {data,isPending,error} = useFetch(url);
     
     return (

@@ -8,7 +8,7 @@ import ProfileDetails from "./ProfileDetails";
 const Profile = ()=>{
     const {id} = useParams();
     const {host} = properties;
-    const url = `http://${host}/api/v1/users/id/${id}`;
+    const url = `${host}/api/v1/users/id/${id}`;
     const {data,isPending}= useFetch(url);
     const [file, setFile] = useState(null);
     const [cookies,SetCookies] = useCookies();
@@ -17,7 +17,7 @@ const Profile = ()=>{
         console.log(file);
         const formData = new FormData();
         formData.append("file",file);
-        const url = `http://${host}/api/v1/upload`;
+        const url = `${host}/api/v1/upload`;
         fetch(url,{
             method:"post",
             headers: {

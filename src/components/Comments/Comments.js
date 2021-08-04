@@ -36,7 +36,7 @@ const Comments =({commentsData})=>{
     //adding new comment
     const addComment = (e)=>{
         e.preventDefault();
-        const url = `http://${host}/api/v1/comments`
+        const url = `${host}/api/v1/comments`
         fetch(url,{
             method:"post",
             headers: {
@@ -74,7 +74,7 @@ const Comments =({commentsData})=>{
                 {comments.map((comment)=>{
                     return (
                     <tr key={comment.id}>
-                        <td name={comment.user.avatar}><img src={`http://${host}/viewFile/${comment.user.avatar}`} width="50" alt="avatar"/></td>
+                        <td name={comment.user.avatar}><img src={`${host}/viewFile/${comment.user.avatar}`} width="50" alt="avatar"/></td>
                         <td>{comment.comment}</td>
                         <td><Link to={`/profile/${comment.user.id}`}>{comment.user.firstName}</Link></td>
                         <td>{comment.user.role}</td>

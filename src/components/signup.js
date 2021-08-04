@@ -11,7 +11,7 @@ const Signup = ()=>{
     if(role)
         history.push("/");
 
-    const url = `http://${host}/register`;
+    const url = `${host}/register`;
     const [firstName,setFirstName] = useState("");
     const [lastName,setLastName] = useState("");
     const [email,setEmail] = useState("");

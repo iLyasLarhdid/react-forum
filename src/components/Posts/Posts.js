@@ -36,7 +36,7 @@ const Posts = ({postsData})=>{
     //adding new post
     const addPost = (e)=>{
         e.preventDefault();
-        const url = `http://${host}/api/v1/posts`;
+        const url = `${host}/api/v1/posts`;
         fetch(url,{
             method:"post",
             headers: {

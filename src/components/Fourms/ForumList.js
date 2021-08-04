@@ -50,7 +50,7 @@ const ForumList = ({forumData}) =>{
         console.log(id);
         if(title.length < 5||content.length < 10)
             return;
-        const url = `http://${host}/api/v1/forums`;
+        const url = `${host}/api/v1/forums`;
         fetch(url,{
             method:"put",
             headers: {
@@ -78,7 +78,7 @@ const ForumList = ({forumData}) =>{
     //delete forum 
     const deleteForum = (e)=>{
         //console.log(e.target.value);
-        const url = `http://${host}/api/v1/forums/id/${e.target.value}`;
+        const url = `${host}/api/v1/forums/id/${e.target.value}`;
         fetch(url,{
             method:"delete",
             headers: {
@@ -95,7 +95,7 @@ const ForumList = ({forumData}) =>{
         console.log("title : "+title+" content : "+content + " user : "+ userId);
         if(title.length < 5||content.length < 10)
             return;
-        const url = `http://${host}/api/v1/forums`;
+        const url = `${host}/api/v1/forums`;
         fetch(url,{
             method:"post",
             headers: {

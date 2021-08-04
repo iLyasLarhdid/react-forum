@@ -7,11 +7,11 @@ import properties from "../properties";
 
 const Login = ()=>{
     const {host} = properties;
-    const url = `http://${host}/login`;
+    const url = `${host}/login`;
     const [cookie, setCookie] = useCookies([]);
     const [, setRole] = useContext(UserContext);
-    const [username,setUsername] = useState("ilyas@test.com");
-    const [password,setPassword] = useState("password");
+    const [username,setUsername] = useState();
+    const [password,setPassword] = useState();
     const [error,setError] = useState(null);
     const history = useHistory();
 
@@ -38,7 +38,7 @@ const Login = ()=>{
             setCookie("principal_first_name",data.firstName,{path:"/",maxAge:86400});
             setCookie("principal_last_name",data.lastName,{path:"/",maxAge:86400});
             setCookie("principal_email",data.email,{path:"/",maxAge:86400});
-            setCookie("principal_avatar",`http://${host}/viewFile/${data.avatar}`,{path:"/",maxAge:86400});
+            setCookie("principal_avatar",`${host}/viewFile/${data.avatar}`,{path:"/",maxAge:86400});
             setCookie("principal_role",data.role,{path:"/",maxAge:86400});
 
             setRole(data.role);

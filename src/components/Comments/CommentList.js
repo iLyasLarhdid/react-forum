@@ -7,7 +7,7 @@ const CommentList = ()=>{
 
     const {id} = useParams();
     const {host} = properties;
-    const url = `http://${host}/api/v1/comments/post/id/${id}`;
+    const url = `${host}/api/v1/comments/post/id/${id}`;
     const {data,isPending,error} = useFetch(url);
     console.log(data);
 

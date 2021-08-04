@@ -4,7 +4,7 @@ import properties from "../../properties";
 
 const ForumColumn = ({forum})=>{
     const {host} = properties;
-    const url = `http://${host}/api/v1/forums/id/${forum.id}/numberOfPostsAndComments`;
+    const url = `${host}/api/v1/forums/id/${forum.id}/numberOfPostsAndComments`;
     const {data,isPending} = useFetch(url);
     
     return (<>

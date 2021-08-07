@@ -6,7 +6,7 @@ const ForumColumn = ({forum})=>{
     const {host} = properties;
     const url = `${host}/api/v1/forums/id/${forum.id}/numberOfPostsAndComments`;
     const [data,isPending] = useFetch(url);
-    console.log(data);
+    
     return (<>
             <td>
                 <b className="h6"><Link to={`/forums/${forum.id}`} className="text-success">{forum.title}</Link></b>

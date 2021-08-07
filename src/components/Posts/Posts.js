@@ -20,8 +20,6 @@ const Posts = ({postsData})=>{
         return new Promise((resolve) => setTimeout(resolve, time));
     }
 
-    console.log(posts);
-    console.log("forum id : "+forumId);
     if(!role)
         history.push("/login");
         
@@ -31,7 +29,6 @@ const Posts = ({postsData})=>{
         else
             setDoPostsExist(true);
     },[posts])
-    console.log(posts);
 
     //adding new post
     const addPost = (e)=>{
@@ -46,7 +43,6 @@ const Posts = ({postsData})=>{
             body:JSON.stringify({content,forumId,userId})
         })
         .then(response => response.json().then(data=>{
-            console.log(data);
             //const index = JSON.stringify(data);
             setPosts([...posts,data])
             setContent("");

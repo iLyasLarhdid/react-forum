@@ -10,7 +10,6 @@ const {host} = properties;
 
 const fetchData = async (key)=>{
     
-    console.log("hello from async + key ",key);
     const postId = key.queryKey[1];
     const token = key.queryKey[2];
     const res = await fetch(`${host}/api/v1/posts/id/${postId}`,{
@@ -33,11 +32,9 @@ const CommentList = ()=>{
         token = cookies.ilyToken;
     
     const {data,isLoading} = useQuery(['forumId',id,token],fetchData,{keepPreviousData:false})
-    console.log(data);
 
     const url = `${host}/api/v1/comments/post/id/${id}`;
     const [comments,isPending,error] = useFetch(url);
-    console.log(comments);
 
     return (
         <div className="container">

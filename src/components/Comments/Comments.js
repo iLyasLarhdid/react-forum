@@ -24,7 +24,6 @@ const Comments =({commentsData})=>{
         else
             setDoCommentsExist(true);
     },[comments,commentsData]);
-    console.log(commentsData);
 
     if(!role)
         history.push("/login");
@@ -46,7 +45,6 @@ const Comments =({commentsData})=>{
             body:JSON.stringify({comment,postId,userId})
         })
         .then(response => response.json().then(data=>{
-            console.log(data);
             //const index = JSON.stringify(data);
             setComments([...comments,data]);
             setComment("");

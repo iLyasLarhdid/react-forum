@@ -43,7 +43,7 @@ const ForumList = ({forumData}) =>{
         e.preventDefault();
         const id = e.target.name;
         document.querySelector("#updateForum"+id).click();
-        console.log(id);
+
         if(title.length < 5||content.length < 10)
             return;
         const url = `${host}/api/v1/forums`;
@@ -57,14 +57,12 @@ const ForumList = ({forumData}) =>{
         })
         .then(response => response.json()
         .then(data=>{
-            console.log(data);
             setForums([...forums,data])
             let updatedForums = forums.map((forum)=>{
                 if(forum.id !== data.id)
                     return forum;
                 return  data;
             });
-            console.log(updatedForums);
             setForums(updatedForums);
             setTitle("");
             setContent("");
@@ -88,7 +86,7 @@ const ForumList = ({forumData}) =>{
     //adding forum 
     const addForum = (e)=>{
         e.preventDefault();
-        console.log("title : "+title+" content : "+content + " user : "+ userId);
+        
         if(title.length < 5||content.length < 10)
             return;
         const url = `${host}/api/v1/forums`;

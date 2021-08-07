@@ -7,7 +7,6 @@ import { useState } from 'react';
 const {host} = properties;
 
 const fetchData = async (key)=>{
-    console.log("hello from async + key ",key," page ", key.queryKey[1]);
     const page = key.queryKey[1];
     const res = await fetch(`${host}/api/v1/forums/page/${page}`)
     return res.json();
@@ -23,9 +22,6 @@ const Home = ()=>{
 
     const {data,isLoading,error,status} = useQuery(['forums',pageNumber],fetchData,{keepPreviousData:false})
 
-    console.log("err ",error);
-    console.log("data :",data);
-    console.log("status:",status);
     return (
         <div className="container">
             <nav aria-label="Page navigation example">

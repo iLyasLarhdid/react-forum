@@ -36,7 +36,6 @@ const Signup = ()=>{
             if(!response.ok){ throw Error("something went wrong")}
             return response.json()})
             .then(data=>{
-                console.log(data);
                 setData(data);
                 setIsPending(false);
                 setError(null);

@@ -26,7 +26,6 @@ const Login = ()=>{
             body:JSON.stringify({username,password})
         })
         .then(response => {
-            console.log(response);
             if(!response.ok)
                 throw Error("either check your email to activate your account or your email or password incorrect");
             

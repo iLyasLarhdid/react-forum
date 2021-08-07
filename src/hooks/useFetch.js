@@ -36,7 +36,6 @@ const useFetch = (url) =>{
                 setData(data);
                 setIsPending(false);
                 setError(null);
-                console.log("token = ",token);
             }).catch((err)=>{
                 setIsPending(false);
                 setError(err.message);

@@ -1,4 +1,4 @@
 const properties = {
-    host:"http://localhost:8080"
+    host:"https://ilyforum.herokuapp.com/"
 }
 export default properties

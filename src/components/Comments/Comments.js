@@ -41,7 +41,7 @@ const Comments =({commentsData})=>{
             method:"post",
             headers: {
                 'Content-Type' : 'application/json',
-                'Authorization': cookies.cyberpunk
+                'Authorization': cookies.ilyToken
             },
             body:JSON.stringify({comment,postId,userId})
         })

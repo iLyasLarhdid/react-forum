@@ -9,8 +9,8 @@ const Logout = ()=>{
     const history = useHistory();
     const [role, setRole] = useContext(UserContext);
 
-    if(cookies.cyberpunk){
-        removeCookie("cyberpunk");
+    if(cookies.ilyToken){
+        removeCookie("ilyToken");
         removeCookie("principal_id");
         removeCookie("principal_first_name");
         removeCookie("principal_last_name");

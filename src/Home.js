@@ -8,12 +8,11 @@ const Home = ()=>{
     const {host} = properties;
     const [cookie,] = useCookies([]);
 
-    if(!cookie.cyberpunk)
+    if(!cookie.ilyToken)
         history.push("/login");
-
-    const url = `${host}/api/v1/forums`;
-    const {data,isPending,error} = useFetch(url);
     
+    const url = `${host}/api/v1/forums/page/0`;
+    const {data,isPending,error} = useFetch(url);
     return (
         <div className="container">
             {error && <div>{error}</div>}

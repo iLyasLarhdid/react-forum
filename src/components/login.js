@@ -15,8 +15,8 @@ const Login = ()=>{
     const [error,setError] = useState(null);
     const history = useHistory();
 
-    if(cookie.cyberpunk)
-        history.push("/");
+    if(cookie.ilyToken)
+        history.push("/forums/page/0");
 
     const signIn = (e) => {
         e.preventDefault();
@@ -29,8 +29,11 @@ const Login = ()=>{
             console.log(response);
             if(!response.ok)
                 throw Error("either check your email to activate your account or your email or password incorrect");
-            const Role = response.headers.get("Authorization");
-            setCookie("cyberpunk",Role,{path:"/",maxAge:86400});
+            
+            const accessToken = response.headers.get("accessToken");
+            const refreshToken = response.headers.get("refreshToken");
+            setCookie("ilyToken",accessToken,{path:"/",maxAge:86400});
+            setCookie("ilyRefreshToken",refreshToken,{path:"/",maxAge:604800});
             return response.json();
         }).then(data=>{
             //console.log("data",data);
@@ -38,7 +41,7 @@ const Login = ()=>{
             setCookie("principal_first_name",data.firstName,{path:"/",maxAge:86400});
             setCookie("principal_last_name",data.lastName,{path:"/",maxAge:86400});
             setCookie("principal_email",data.email,{path:"/",maxAge:86400});
-            setCookie("principal_avatar",`${host}/viewFile/${data.avatar}`,{path:"/",maxAge:86400});
+            setCookie("principal_avatar",`${host}/upload/viewFile/${data.avatar}`,{path:"/",maxAge:86400});
             setCookie("principal_role",data.role,{path:"/",maxAge:86400});
 
             setRole(data.role);

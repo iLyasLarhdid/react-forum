@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
-import { useHistory } from "react-router";
 import { UserContext } from "../../hooks/UserContext";
 import properties from "../../properties";
 import ForumColumn from "./ForumColumn";
@@ -12,7 +11,6 @@ const ForumList = ({forumData}) =>{
     const [content, setContent] = useState("");
     const [cookies,] = useCookies([]);
     const userId = cookies.principal_id;
-    const history = useHistory();
     const [doForumsExist,setDoForumsExist] = useState(false);
     const {host} = properties;
 
@@ -28,8 +26,6 @@ const ForumList = ({forumData}) =>{
         return new Promise((resolve) => setTimeout(resolve, time));
     }
 
-    if(!cookies.cyberpunk)
-     history.push("/login");
     //filling the state variables for edit
     const fillStateVariables = (e)=>{
         const docOfRow=document.querySelector("#row"+e.target.value);
@@ -55,7 +51,7 @@ const ForumList = ({forumData}) =>{
             method:"put",
             headers: {
                 'Content-Type' : 'application/json',
-                'Authorization': cookies.cyberpunk
+                'Authorization': cookies.ilyToken
             },
             body:JSON.stringify({id,title,content,userId})
         })
@@ -63,7 +59,7 @@ const ForumList = ({forumData}) =>{
         .then(data=>{
             console.log(data);
             setForums([...forums,data])
-            let updatedForums = forums.map((forum)=>{
+            let updatedForums = forums.content.map((forum)=>{
                 if(forum.id !== data.id)
                     return forum;
                 return  data;
@@ -82,7 +78,7 @@ const ForumList = ({forumData}) =>{
         fetch(url,{
             method:"delete",
             headers: {
-                'Authorization': cookies.cyberpunk
+                'Authorization': cookies.ilyToken
             }
         })
         .then(response => {
@@ -100,7 +96,7 @@ const ForumList = ({forumData}) =>{
             method:"post",
             headers: {
                 'Content-Type' : 'application/json',
-                'Authorization': cookies.cyberpunk
+                'Authorization': cookies.ilyToken
             },
             body:JSON.stringify({title,content,userId})
         })
@@ -125,7 +121,7 @@ const ForumList = ({forumData}) =>{
                 </tr>
                 </thead>
                 <tbody>
-                {doForumsExist && forums.map((forum)=>{ 
+                {doForumsExist && forums.content.map((forum)=>{ 
                     return (
                         <tr className="forums-details" key={forum.id} id={"row"+forum.id}>
                         <ForumColumn forum={forum}/>

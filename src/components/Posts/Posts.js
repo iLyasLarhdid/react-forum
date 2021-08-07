@@ -41,7 +41,7 @@ const Posts = ({postsData})=>{
             method:"post",
             headers: {
                 'Content-Type' : 'application/json',
-                'Authorization': cookies.cyberpunk
+                'Authorization': cookies.ilyToken
             },
             body:JSON.stringify({content,forumId,userId})
         })

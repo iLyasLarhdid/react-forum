@@ -17,7 +17,7 @@ const Profile = ()=>{
         console.log(file);
         const formData = new FormData();
         formData.append("file",file);
-        const url = `${host}/api/v1/upload`;
+        const url = `${host}/upload`;
         fetch(url,{
             method:"post",
             headers: {

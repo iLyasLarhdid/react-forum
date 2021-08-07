@@ -11,8 +11,8 @@ const useFetch = (url) =>{
     
     let token = "";
     
-    if(cookies.cyberpunk != null)
-        token = cookies.cyberpunk;
+    if(cookies.ilyToken != null)
+        token = cookies.ilyToken;
    
     useEffect(()=>{
         fetch(url,

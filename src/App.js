@@ -14,6 +14,7 @@ import Profile from './components/Profiles/Profile';
 function App() {
   const [cookies,] = useCookies([]);
   const [role, setRole] = useState(cookies.principal_role);
+  
   return (<>
   <Router>
   <UserContext.Provider value={[role,setRole]}>

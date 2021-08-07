@@ -45,6 +45,6 @@ const useFetch = (url) =>{
 
     //we use this empty erray [] to depend on so that useEffect can only be fired once, or when the empty array changes(which is wont happen)
     
-    return {data,isPending,error}
+    return [data,isPending,error]
 }
 export default useFetch;

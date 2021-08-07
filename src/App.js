@@ -10,13 +10,15 @@ import NavBar from './components/NavBar';
 import Signup from './components/signup';
 import ForumDetails from './components/Posts/PostsList';
 import Profile from './components/Profiles/Profile';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 function App() {
   const [cookies,] = useCookies([]);
   const [role, setRole] = useState(cookies.principal_role);
-  
+  const queryClient = new QueryClient();
   return (<>
   <Router>
+  <QueryClientProvider client={queryClient}>   
   <UserContext.Provider value={[role,setRole]}>
     <NavBar/>
       <Switch>
@@ -43,6 +45,7 @@ function App() {
         </Route>
       </Switch>
     </UserContext.Provider>
+    </QueryClientProvider>
     </Router>
     </>
   );

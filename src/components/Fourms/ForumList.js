@@ -59,7 +59,7 @@ const ForumList = ({forumData}) =>{
         .then(data=>{
             console.log(data);
             setForums([...forums,data])
-            let updatedForums = forums.content.map((forum)=>{
+            let updatedForums = forums.map((forum)=>{
                 if(forum.id !== data.id)
                     return forum;
                 return  data;
@@ -121,7 +121,7 @@ const ForumList = ({forumData}) =>{
                 </tr>
                 </thead>
                 <tbody>
-                {doForumsExist && forums.content.map((forum)=>{ 
+                {doForumsExist && forums.map((forum)=>{ 
                     return (
                         <tr className="forums-details" key={forum.id} id={"row"+forum.id}>
                         <ForumColumn forum={forum}/>

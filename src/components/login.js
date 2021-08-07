@@ -16,7 +16,7 @@ const Login = ()=>{
     const history = useHistory();
 
     if(cookie.ilyToken)
-        history.push("/forums/page/0");
+        history.push("/");
 
     const signIn = (e) => {
         e.preventDefault();

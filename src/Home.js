@@ -20,7 +20,7 @@ const Home = ()=>{
     if(!cookie.ilyToken)
         history.push("/login");
 
-    const {data,isLoading,error,status} = useQuery(['forums',pageNumber],fetchData,{keepPreviousData:false})
+    const {data,isLoading,error} = useQuery(['forums',pageNumber],fetchData,{keepPreviousData:false})
 
     return (
         <div className="container">

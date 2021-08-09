@@ -4,6 +4,8 @@ import { useHistory, useParams } from "react-router";
 import { UserContext } from "../../hooks/UserContext";
 import { Link } from "react-router-dom";
 import properties from "../../properties";
+import Avatar from "antd/lib/avatar/avatar";
+import { UserOutlined } from '@ant-design/icons';
 
 const Comments =({commentsData})=>{
     const {id} = useParams();
@@ -55,7 +57,6 @@ const Comments =({commentsData})=>{
         <div className="forums-container">
         <h2>Comments</h2>
         <div>{!doCommentsExist && <>no comments for this forum yet</>}</div>
-        {doCommentsExist && <div><h4> forum : {comments[0].post.forum.content}</h4><h5>post : {comments[0].post.content}</h5></div>}
         <table className="table table-responsive table-hover table-bordered table-striped">
             <thead>
             <tr>
@@ -72,7 +73,13 @@ const Comments =({commentsData})=>{
                 {comments.map((comment)=>{
                     return (
                     <tr key={comment.id}>
-                        <td name={comment.user.avatar}><img src={`${host}/viewFile/${comment.user.avatar}`} width="50" alt="avatar"/></td>
+                        <td name={comment.user.avatar}>
+                            {comment.user.avatar ? 
+                                <img src={`${host}/viewFile/${comment.user.avatar}`} width="50" alt="avatar"/>
+                            :
+                                <Avatar icon={<UserOutlined />} />
+                            }
+                        </td>
                         <td>{comment.comment}</td>
                         <td><Link to={`/profile/${comment.user.id}`}>{comment.user.firstName}</Link></td>
                         <td>{comment.user.role}</td>

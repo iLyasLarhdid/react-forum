@@ -2,8 +2,9 @@ import { useHistory } from 'react-router';
 import ForumList from './components/Fourms/ForumList';
 import properties from './properties';
 import { useCookies } from 'react-cookie';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import { useState } from 'react';
+import { Pagination, Skeleton } from 'antd';
 const {host} = properties;
 
 const fetchData = async (key)=>{
@@ -11,38 +12,30 @@ const fetchData = async (key)=>{
     const res = await fetch(`${host}/api/v1/forums/page/${page}`)
     return res.json();
 }
+
 const Home = ()=>{
     const history = useHistory();
     const [cookie,] = useCookies([]);
     const [pageNumber, setPageNumber] = useState(0);
-    const queryClient = useQueryClient()
 
     if(!cookie.ilyToken)
         history.push("/login");
 
-    const {data,isLoading,error} = useQuery(['forums',pageNumber],fetchData,{keepPreviousData:false})
+    const changePage = (page)=>{
+        setPageNumber(page-1)
+    }
+    const {data,isLoading,error} = useQuery(['forums',pageNumber],fetchData,{keepPreviousData:true})
 
+    console.log(data);
     return (
         <div className="container">
-            <nav aria-label="Page navigation example">
-            <ul class="pagination">
-                    <li className="page-item">
-                        <button className="page-link">Previous</button>
-                    </li>
-                    <li className="page-item" onClick={()=>{setPageNumber(0);queryClient.removeQueries("forums")}}>
-                        <button className="page-link">1</button>
-                    </li>
-                    <li className="page-item" onClick={()=>{setPageNumber(1);queryClient.removeQueries("forums")}}>
-                        <button className="page-link">2</button>
-                    </li>
-                    <li className="page-item" onClick={()=>setPageNumber(4)}>
-                        <button className="page-link">Next</button>
-                    </li>
-                </ul>
-            </nav>
+            
             {error && <div>{error}</div>}
-            {isLoading && <div>loading ...</div>}
+            <div>{isLoading && <><Skeleton active/><Skeleton active/><Skeleton active/></>}</div>
             {data && <ForumList forumData={data.content}/>}
+
+            {data && <Pagination pageSize={data.size} defaultCurrent={data.number+1} total={data.totalElements} onChange={changePage} style={{paddingBottom:"2rem"}}/>}
+
         </div>
     );
 }

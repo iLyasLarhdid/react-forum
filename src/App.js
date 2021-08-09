@@ -20,7 +20,7 @@ function App() {
   <Router>
   <QueryClientProvider client={queryClient}>   
   <UserContext.Provider value={[role,setRole]}>
-    <NavBar/>
+    {role && <NavBar/>}
       <Switch>
         <Route exact path="/">
           <Home/>

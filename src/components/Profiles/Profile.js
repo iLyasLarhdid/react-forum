@@ -9,7 +9,7 @@ const Profile = ()=>{
     const {id} = useParams();
     const {host} = properties;
     const url = `${host}/api/v1/users/id/${id}`;
-    const {data,isPending}= useFetch(url);
+    const [data,isPending]= useFetch(url);
     const [file, setFile] = useState(null);
     const [cookies,SetCookies] = useCookies();
     const uploadFile = (e)=>{
@@ -37,7 +37,8 @@ const Profile = ()=>{
     //2-give the ability to set the avatar.
     //3- after updating the avatar we update the cookie so it displays the updated updated picture
 
-    return (<div className="forums-container">
+    return (
+    <div className="forums-container">
         <h2>profile</h2>
         <form onSubmit={uploadFile}>
             <input type="file" name="inpFile" onChange={(e)=>{setFile(e.target.files[0])}}/>

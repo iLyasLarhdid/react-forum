@@ -4,6 +4,7 @@ import useFetch from "../../hooks/useFetch";
 import properties from "../../properties";
 import { useQuery } from "react-query";
 import { useCookies } from "react-cookie";
+import { Skeleton } from "antd";
 
 const {host} = properties;
    
@@ -38,11 +39,16 @@ const CommentList = ()=>{
 
     return (
         <div className="container">
-        <div>{isLoading && <div>loading ...</div>}</div>
-        <div>{data && <><h1>{data.title}</h1><p>{data.content}</p></>}</div>
+        <div>{isLoading && <><Skeleton active/><Skeleton active/></>}</div>
+        {data && <div><h4> forum :</h4><p> {data.forum.content}</p><h5>post :</h5><p>{data.content}</p></div>}
 
         <div>{error && <div>{error}</div>}</div>
-        <div>{isPending && <div>loading ...</div>}</div>
+        <div>{isPending && <>
+                            <Skeleton avatar paragraph={{ rows: 4 }} active/>
+                            <Skeleton avatar paragraph={{ rows: 4 }} active/>
+                            <Skeleton avatar paragraph={{ rows: 4 }} active/>
+                            </>}
+        </div>
         <div>{comments && <Comments commentsData={comments}/>}</div>
         </div>
     );

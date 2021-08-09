@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useHistory } from "react-router";
 import { UserContext } from "../hooks/UserContext";
 import properties from "../properties";
+import { Spin } from "antd";
 const Signup = ()=>{
 
     const [role,] = useContext(UserContext);
@@ -20,20 +21,24 @@ const Signup = ()=>{
     const [isPending,setIsPending] = useState();
     const [error,setError] = useState(null);
     const [data,setData] = useState(null);
+    const [isButtonLoading,setIsButtonLoading] = useState(false);
 
     function sleep(seconds){
         return new Promise((resolve)=>setTimeout(resolve,seconds));
     }
 
     const register = (e)=>{
+        setIsButtonLoading(true);
         setIsPending(true);
         e.preventDefault();
+        if(password===confirm){
         fetch(url , {
             method:"POST",
             headers:{"Content-Type" : "application/json"},
             body: JSON.stringify({firstName,lastName,email,password})
         }).then(response=>{
             if(!response.ok){ throw Error("something went wrong")}
+            setIsButtonLoading(false);
             return response.json()})
             .then(data=>{
                 setData(data);
@@ -44,13 +49,24 @@ const Signup = ()=>{
                 setIsPending(false);
                 setError(err.message);
             })
+        }
+        else
+            setError("Mmmmm seriously!! did you just try to change disabled through inspect to see what happens")
     }
 
     return (
+        <div className="card" style={{ margin:"auto", width:"30rem"}}>
+            <div className="card-header">
+                <h4>Sign Up</h4>
+            </div>
+            <div className="card-body">
+                
+
+                
             <div className="container">
-                <h1>Sing up</h1>
                 {data ? <h3 className="text-success">done</h3>:""}
-                {isPending ? <h3 className="text-info">loading...</h3>:""}
+                {isPending && error ==null ? <h3 className="text-info">loading...</h3>:""}
+                {isPending && error ==null ? <Spin></Spin>:""}
                 {error!==null ? <h3 className="text-danger">{error}</h3>:""}
             <form  onSubmit={register}>
             <div className="row g-2">
@@ -81,12 +97,23 @@ const Signup = ()=>{
                 </div>
 
                 <div className="form-group mb-2">
-                    {password===confirm ? <button type="submit" className="btn btn-success">registered</button>:<button disabled type="submit" className="btn btn-success">registered</button>}
+                    {password===confirm 
+                    ? 
+                        <button type="submit" className="btn btn-success">{isButtonLoading ? <Spin/>:"registered"}</button>
+                    :
+                        <button disabled type="submit" className="btn btn-success">registered</button>}
                 </div>
-                <span>Already registered? <Link to="/login">login here</Link></span>
             </div>
             </form>
             </div>
+
+
+
+            </div>
+            <div className="card-footer text-muted">
+                <span>Already registered? <Link to="/login">login here</Link></span>
+            </div>
+        </div>
     )
 
 }

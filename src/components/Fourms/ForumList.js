@@ -1,5 +1,7 @@
+import { List,Popconfirm } from "antd";
 import { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import { Link, useHistory } from "react-router-dom";
 import { UserContext } from "../../hooks/UserContext";
 import properties from "../../properties";
 import ForumColumn from "./ForumColumn";
@@ -13,13 +15,22 @@ const ForumList = ({forumData}) =>{
     const userId = cookies.principal_id;
     const [doForumsExist,setDoForumsExist] = useState(false);
     const {host} = properties;
+    
+    const history = useHistory();
 
+    if(!cookies.ilyToken)
+        history.push("/login");
+        
     useEffect(()=>{
         if(forums.length === 0)
             setDoForumsExist(false);
         else
             setDoForumsExist(true);
-    },[forums,forumData]);
+    },[forums]);
+
+    useEffect(()=>{
+        setForums(forumData);
+    },[forumData]);
 
     // sleep time expects milliseconds
     function sleep (time) {
@@ -27,17 +38,11 @@ const ForumList = ({forumData}) =>{
     }
 
     //filling the state variables for edit
-    const fillStateVariables = (e)=>{
-        const docOfRow=document.querySelector("#row"+e.target.value);
-        let row = null;
-        if(docOfRow){
-            row = docOfRow.children;
-            //console.log(row);
-            setTitle(row[0].innerText);
-            setContent(row[1].innerText);
-        }
-        
+    const fillStateVariables = (title,content)=>{
+            setTitle(title);
+            setContent(content);
     }
+    
     //update forum
     const updateForum = (e)=>{
         e.preventDefault();
@@ -57,6 +62,7 @@ const ForumList = ({forumData}) =>{
         })
         .then(response => response.json()
         .then(data=>{
+            //todo you should delete this setforums since it just renders again for no reason
             setForums([...forums,data])
             let updatedForums = forums.map((forum)=>{
                 if(forum.id !== data.id)
@@ -72,7 +78,7 @@ const ForumList = ({forumData}) =>{
     //delete forum 
     const deleteForum = (e)=>{
         //console.log(e.target.value);
-        const url = `${host}/api/v1/forums/id/${e.target.value}`;
+        const url = `${host}/api/v1/forums/id/${e}`;
         fetch(url,{
             method:"delete",
             headers: {
@@ -80,7 +86,7 @@ const ForumList = ({forumData}) =>{
             }
         })
         .then(response => {
-            document.querySelector("#row"+e.target.value).remove();
+            document.querySelector("#row"+e).remove();
             return response});
     }
     //adding forum 
@@ -108,32 +114,37 @@ const ForumList = ({forumData}) =>{
     return (
         <div className="forums-container">
             <h2>Forums</h2>
-            <table className="table table-responsive table-hover table-striped table-bordered">
-                <thead>
-                <tr>
-                    <th>title</th>
-                    <th className="w-50">content</th>
-                    <th>posts</th>
-                    <th>comments</th>
-                    {role==="ADMIN" ? <th>actions</th> :""}
-                </tr>
-                </thead>
-                <tbody>
                 {doForumsExist && forums.map((forum)=>{ 
                     return (
-                        <tr className="forums-details" key={forum.id} id={"row"+forum.id}>
-                        <ForumColumn forum={forum}/>
-                        {role==="ADMIN" ? 
-                        <td>
-                        <button className="btn btn-danger me-2 mb-1 w-100" value={forum.id} onClick={deleteForum}>Delete</button>
-                        <button className="btn btn-success w-100" data-bs-toggle="modal" data-bs-target={"#updateForum"+forum.id} value={forum.id} onClick={fillStateVariables}>Edit</button>
-                        {/* modal for uodating the forum                     */}
-                        <form onSubmit={updateForum} name={forum.id}>
-                        <div className="modal fade" id={"updateForum"+forum.id} tabIndex="-1" aria-labelledby="updateForumLable" aria-hidden="true">
+                        <ForumColumn key={forum.id} forum={forum}/>
+                    )     
+                })}
+
+
+
+            <List
+            itemLayout="vertical"
+            dataSource={forums}
+            renderItem={item => (
+            <List.Item 
+            id={"row"+item.id}
+            actions=
+                {role==="ADMIN" ?[
+                <Popconfirm title="Sure to cancel?" onConfirm={()=>deleteForum(item.id)}><button className="btn btn-outline-danger">delete</button></Popconfirm>,
+                 <button className="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target={"#updateForum"+item.id} value={item.id} onClick={()=>fillStateVariables(item.title,item.content)}>edit</button>]:""}
+            >
+                <List.Item.Meta
+                title={<Link to={`/forums/${item.id}`}>{item.title}</Link>}
+                description={item.content}
+                />
+
+                {/* modal for uodating the forum                     */}
+                <form onSubmit={updateForum} name={item.id}>
+                        <div className="modal fade" id={"updateForum"+item.id} tabIndex="-1" aria-labelledby="updateForumLable" aria-hidden="true">
                         <div className="modal-dialog">
                             <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="updateForumLable">Edit forum {forum.id}</h5>
+                                <h5 className="modal-title" id="updateForumLable">Edit forum {item.id}</h5>
                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div className="modal-body">
@@ -161,14 +172,12 @@ const ForumList = ({forumData}) =>{
                         </div>
                         </div>
                         </form>
-                        </td>:""}
-                        </tr>
-                    )     
-                })}
-                </tbody>
-            </table>
-            {role==="ADMIN" ? <>
 
+            </List.Item>
+            )}
+        />
+
+        {role==="ADMIN" ? <>
             <button className="btn btn-outline-success mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#addForum" aria-expanded="false" aria-controls="addForum" onClick={()=>{sleep(250).then(()=>{window.scrollTo(0,document.body.scrollHeight)})}}>Add forum</button>
 
             <form className="collapse multi-collapse" id="addForum" onSubmit={addForum}>

@@ -51,7 +51,6 @@ const Posts = ({postsData})=>{
     return (
         <div className="forums-container">
             <h2>Posts</h2>
-            <div>{!doPostsExist ? <>no posts for this forum yet</>:<><h3>{posts[0].forum.title}</h3><h4>{posts[0].forum.content}</h4> </>}</div>
             <table className="table table-bordered table-hover table-striped">
                 <thead>
                 <tr>

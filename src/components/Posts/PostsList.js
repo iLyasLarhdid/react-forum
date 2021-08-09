@@ -23,7 +23,7 @@ const ForumDetails = () =>{
     return (
     <div className="container">
         <div>{isLoading && <div>loading ...</div>}</div>
-        <div>{data && <><h1>{data.title}</h1><p>{data.content}</p></>}</div>
+        <div>{data &&<><h1>{data.title}</h1><h4>{data.content}</h4> </>}</div>
 
         <div>{error && <div>{error}</div>}</div>
         <div>{isPending && <div>loading ...</div>}</div>

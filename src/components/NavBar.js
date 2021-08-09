@@ -26,16 +26,23 @@ const NavBar = () =>{
             {!role ? <Link className="nav-link" to="/login">login</Link> : <Link className="nav-link" to="/logout">logout</Link>}
           </li>
           <li className="nav-item">
-          
-          {role ? <span className="nav-link">welcome {cookies.principal_first_name} : {role.avatar}<img src={cookies.principal_avatar} width="20" alt="avatar"/></span> : ""
-          //this doesnt work when you logout or login!!!
+          <span className="nav-link">
+          {role ? 
+          <>
+            
+              welcome {cookies.principal_first_name}
+            
+          </>
+          : ""
           }
+          {cookies.principal_avatar?
+            <img src={cookies.principal_avatar} width="20" alt="avatar"/>
+            :
+            <></>
+          }
+          </span> 
           </li>
         </ul>
-        <form className="d-flex">
-          <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-          <button className="btn btn-outline-success" type="submit">Search</button>
-        </form>
       </div>
     </div>
   </nav></>)

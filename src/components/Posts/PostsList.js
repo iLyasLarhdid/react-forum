@@ -3,6 +3,7 @@ import Posts from "./Posts";
 import useFetch from "../../hooks/useFetch";
 import properties from "../../properties";
 import { useQuery } from "react-query";
+import { List, Skeleton } from "antd";
 const {host} = properties;
 
 const fetchData = async (key)=>{
@@ -18,15 +19,22 @@ const ForumDetails = () =>{
 
     const url = `${host}/api/v1/posts/forum/id/${id}`;
     const [posts,isPending,error] = useFetch(url);
-
+    
+    console.log(posts);
    
     return (
     <div className="container">
-        <div>{isLoading && <div>loading ...</div>}</div>
-        <div>{data &&<><h1>{data.title}</h1><h4>{data.content}</h4> </>}</div>
+        {isLoading && <div><Skeleton active/></div>}
+        {data && 
+            <div>
+                <h5>forums : </h5>
+                <List.Item >
+                <List.Item.Meta title={data.title} description={data.content} />
+                </List.Item>
+            </div>}
 
         <div>{error && <div>{error}</div>}</div>
-        <div>{isPending && <div>loading ...</div>}</div>
+        <div>{isPending && <div><Skeleton active/><Skeleton active/><Skeleton active/></div>}</div>
         <div>{posts && <Posts postsData={posts}/>}</div>
     </div>)
 }

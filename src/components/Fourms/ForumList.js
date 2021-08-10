@@ -1,10 +1,12 @@
-import { List,Popconfirm } from "antd";
+import { List,message,Popconfirm, Space } from "antd";
 import { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { Link, useHistory } from "react-router-dom";
 import { UserContext } from "../../hooks/UserContext";
 import properties from "../../properties";
 import ForumColumn from "./ForumColumn";
+import { MessageOutlined, LikeOutlined, StarOutlined, EyeOutlined } from '@ant-design/icons';
+import React from "react";
 
 const ForumList = ({forumData}) =>{
     const [forums,setForums] =  useState(forumData);
@@ -42,6 +44,13 @@ const ForumList = ({forumData}) =>{
             setTitle(title);
             setContent(content);
     }
+
+    const IconText = ({ icon, text }) => (
+        <Space>
+          {React.createElement(icon)}
+          {text}
+        </Space>
+      );
     
     //update forum
     const updateForum = (e)=>{
@@ -51,6 +60,9 @@ const ForumList = ({forumData}) =>{
 
         if(title.length < 5||content.length < 10)
             return;
+
+        message.loading('updating....',"updating");
+
         const url = `${host}/api/v1/forums`;
         fetch(url,{
             method:"put",
@@ -72,6 +84,7 @@ const ForumList = ({forumData}) =>{
             setForums(updatedForums);
             setTitle("");
             setContent("");
+            message.success({content:'Updated successfully', key:"updating", duration:2});
         }));
 
     }
@@ -87,6 +100,7 @@ const ForumList = ({forumData}) =>{
         })
         .then(response => {
             document.querySelector("#row"+e).remove();
+            message.success('deleted successfully');
             return response});
     }
     //adding forum 
@@ -104,12 +118,20 @@ const ForumList = ({forumData}) =>{
             },
             body:JSON.stringify({title,content,userId})
         })
-        .then(response => response.json().then(data=>{
+        .then(response => {
+            if(!response.ok){
+                throw Error("somethign went wrong");
+            }
+            return response.json()})
+        .then(data=>{
             console.log(data);
             setForums([...forums,data]);
             setTitle("");
             setContent("");
-        }));
+            message.success('Added successfully');
+        }).catch((err)=>{
+            message.error(err);
+        });
     }
     return (
         <div className="forums-container">
@@ -128,10 +150,15 @@ const ForumList = ({forumData}) =>{
             renderItem={item => (
             <List.Item 
             id={"row"+item.id}
-            actions=
-                {role==="ADMIN" ?[
+            actions={[
+                <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />,
+                <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o" />,
+                <IconText icon={MessageOutlined} text={<ForumColumn key={item.id} forumId={item.id}/>} key="list-vertical-message" />,
+                <IconText icon={EyeOutlined} text="2.5K" key="list-vertical-message" />,
+                role==="ADMIN" ?<>
                 <Popconfirm title="Sure to cancel?" onConfirm={()=>deleteForum(item.id)}><button className="btn btn-outline-danger">delete</button></Popconfirm>,
-                 <button className="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target={"#updateForum"+item.id} value={item.id} onClick={()=>fillStateVariables(item.title,item.content)}>edit</button>]:""}
+                 <button className="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target={"#updateForum"+item.id} value={item.id} onClick={()=>fillStateVariables(item.title,item.content)}>edit</button></>:""
+              ]}
             >
                 <List.Item.Meta
                 title={<Link to={`/forums/${item.id}`}>{item.title}</Link>}

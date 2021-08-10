@@ -1,11 +1,13 @@
-import { useContext, useEffect, useState } from "react";
+import { createElement, useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { useHistory, useParams } from "react-router";
 import { UserContext } from "../../hooks/UserContext";
 import { Link } from "react-router-dom";
 import properties from "../../properties";
 import Avatar from "antd/lib/avatar/avatar";
-import { UserOutlined } from '@ant-design/icons';
+import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled  } from '@ant-design/icons';
+import { Comment, Empty, message, Tooltip } from "antd";
+import React from "react";
 
 const Comments =({commentsData})=>{
     const {id} = useParams();
@@ -19,6 +21,9 @@ const Comments =({commentsData})=>{
     const userId = cookies.principal_id;
     const history = useHistory();
     const {host} = properties;
+    const [likes, setLikes] = useState(0);
+    const [dislikes, setDislikes] = useState(0);
+    const [action, setAction] = useState(null);
 
     useEffect(()=>{
         if(comments.length === 0)
@@ -33,11 +38,39 @@ const Comments =({commentsData})=>{
     function sleep (time) {
         return new Promise((resolve) => setTimeout(resolve, time));
     }
+    const like = () => {
+        setLikes(1);
+        setDislikes(0);
+        setAction('liked');
+      };
+    
+    const dislike = () => {
+        setLikes(0);
+        setDislikes(1);
+        setAction('disliked');
+      };
+
+      const actions = [
+        <Tooltip key="comment-basic-like" title="Like">
+          <span onClick={like}>
+            {createElement(action === 'liked' ? LikeFilled : LikeOutlined)}
+            <span className="comment-action">{likes}</span>
+          </span>
+        </Tooltip>,
+        <Tooltip key="comment-basic-dislike" title="Dislike">
+          <span onClick={dislike}>
+            {React.createElement(action === 'disliked' ? DislikeFilled : DislikeOutlined)}
+            <span className="comment-action">{dislikes}</span>
+          </span>
+        </Tooltip>,
+        <span key="comment-basic-reply-to">Reply to</span>,
+      ];
 
     //adding new comment
     const addComment = (e)=>{
         e.preventDefault();
-        const url = `${host}/api/v1/comments`
+        const url = `${host}/api/v1/comments`;
+        message.loading('updating....',"updating");
         fetch(url,{
             method:"post",
             headers: {
@@ -50,48 +83,43 @@ const Comments =({commentsData})=>{
             //const index = JSON.stringify(data);
             setComments([...comments,data]);
             setComment("");
+            message.success({content:'Updated successfully', key:"updating", duration:2});
         }));
     }
 
     return (
         <div className="forums-container">
-        <h2>Comments</h2>
-        <div>{!doCommentsExist && <>no comments for this forum yet</>}</div>
-        <table className="table table-responsive table-hover table-bordered table-striped">
-            <thead>
-            <tr>
-                <th>avatar</th>
-                <th>title</th>
-                <th>posted by</th>
-                <th>role</th>
-                <th>posted</th>
-            </tr>
-            </thead>
-            <tbody>
+        <h5>Comments : </h5>
+        <div>{!doCommentsExist && <Empty description="no comments"/>}</div>
             <>{doCommentsExist && 
                 <>
                 {comments.map((comment)=>{
                     return (
-                    <tr key={comment.id}>
-                        <td name={comment.user.avatar}>
+                        <Comment
+                        actions={actions}
+                        author={<Tooltip title={comment.user.role}>
+                                    <Link to={`/profile/${comment.user.id}`}>{comment.user.lastName} {comment.user.firstName}</Link>
+                                </Tooltip>}
+                        datetime={<span>{comment.commentDate}</span>}
+                        avatar=
                             {comment.user.avatar ? 
                                 <img src={`${host}/viewFile/${comment.user.avatar}`} width="50" alt="avatar"/>
                             :
-                                <Avatar icon={<UserOutlined />} />
+                                <Avatar
+                                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                                alt="avatar"
+                                />
                             }
-                        </td>
-                        <td>{comment.comment}</td>
-                        <td><Link to={`/profile/${comment.user.id}`}>{comment.user.firstName}</Link></td>
-                        <td>{comment.user.role}</td>
-                        <td>{comment.commentDate}</td>
-                    </tr>
+                        
+                        content={<p>{comment.comment}</p>}
+                    >
+                        {/* you can post sub comments here */}
+                    </Comment>
                     )
                 })}
                 </>
             }</>
-            </tbody>
 
-        </table>
         
         {/* form for leaving messages */}
         {role==="ADMIN" ? <>

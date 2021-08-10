@@ -4,7 +4,9 @@ import useFetch from "../../hooks/useFetch";
 import properties from "../../properties";
 import { useQuery } from "react-query";
 import { useCookies } from "react-cookie";
-import { Skeleton } from "antd";
+import { List, Skeleton, Comment, Tooltip } from "antd";
+import Avatar from "antd/lib/avatar/avatar";
+import { Link } from "react-router-dom";
 
 const {host} = properties;
    
@@ -34,13 +36,40 @@ const CommentList = ()=>{
     
     const {data,isLoading} = useQuery(['forumId',id,token],fetchData,{keepPreviousData:false})
 
+    console.log(data);
     const url = `${host}/api/v1/comments/post/id/${id}`;
     const [comments,isPending,error] = useFetch(url);
 
     return (
         <div className="container">
         <div>{isLoading && <><Skeleton active/><Skeleton active/></>}</div>
-        {data && <div><h4> forum :</h4><p> {data.forum.content}</p><h5>post :</h5><p>{data.content}</p></div>}
+
+        {data && 
+            <div>
+                <List.Item id={"row"+data.forum.id} >
+                <List.Item.Meta title="Forum" description={data.forum.title} />
+                </List.Item>
+
+                <Comment
+                        author={<Tooltip title={data.user.role}>
+                                    <Link to={`/profile/${data.user.id}`}>{data.user.lastName} {data.user.firstName}</Link>
+                                </Tooltip>}
+                        datetime={<span>{data.postDate}</span>}
+                        avatar=
+                            {data.user.avatar ? 
+                                <img src={`${host}/viewFile/${data.user.avatar}`} width="50" alt="avatar"/>
+                            :
+                                <Avatar
+                                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                                alt="avatar"
+                                />
+                            }
+                        
+                        content={<p>{data.content}</p>}
+                    >
+                     {comments && <Comments commentsData={comments}/>}   
+                    </Comment>
+            </div>}
 
         <div>{error && <div>{error}</div>}</div>
         <div>{isPending && <>
@@ -49,7 +78,6 @@ const CommentList = ()=>{
                             <Skeleton avatar paragraph={{ rows: 4 }} active/>
                             </>}
         </div>
-        <div>{comments && <Comments commentsData={comments}/>}</div>
         </div>
     );
 }

@@ -103,7 +103,7 @@ const Comments =({commentsData})=>{
                         datetime={<span>{comment.commentDate}</span>}
                         avatar=
                             {comment.user.avatar ? 
-                                <img src={`${host}/viewFile/${comment.user.avatar}`} width="50" alt="avatar"/>
+                                <img src={`${host}/upload/viewFile/${comment.user.avatar}`} width="50" alt="avatar"/>
                             :
                                 <Avatar
                                 src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
@@ -122,7 +122,7 @@ const Comments =({commentsData})=>{
 
         
         {/* form for leaving messages */}
-        {role==="ADMIN" ? <>
+        {role ? <>
 
             <button className="btn btn-outline-success mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#addComment" aria-expanded="false" aria-controls="addComment" onClick={()=>{sleep(300).then(()=>{window.scrollTo(0,document.body.scrollHeight)})}}>Comment</button>
 

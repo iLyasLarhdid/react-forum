@@ -11,7 +11,7 @@ const Profile = ()=>{
     const url = `${host}/api/v1/users/id/${id}`;
     const [data,isPending]= useFetch(url);
     const [file, setFile] = useState(null);
-    const [cookies,SetCookies] = useCookies();
+    const [cookies,setCookies] = useCookies();
     const uploadFile = (e)=>{
         e.preventDefault();
         console.log(file);
@@ -21,13 +21,14 @@ const Profile = ()=>{
         fetch(url,{
             method:"post",
             headers: {
-                'Authorization': cookies.cyberpunk
+                'Authorization': cookies.ilyToken
             },
             body:formData
         })
         .then(response => response.json().then(data=>{
+            console.log("upload=>");
             console.log(data);
-            SetCookies("principal_avatar",data.fileUri);
+            setCookies("principal_avatar",data.fileUri);
             //const index = JSON.stringify(data);
         }));
     }

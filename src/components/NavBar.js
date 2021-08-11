@@ -35,11 +35,6 @@ const NavBar = () =>{
           </>
           : ""
           }
-          {cookies.principal_avatar?
-            <img src={cookies.principal_avatar} width="20" alt="avatar"/>
-            :
-            <></>
-          }
           </span> 
           </li>
         </ul>

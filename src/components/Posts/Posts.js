@@ -5,7 +5,7 @@ import { Link, useHistory, useParams } from "react-router-dom";
 import { UserContext } from "../../hooks/UserContext";
 import properties from "../../properties";
 import Avatar from "antd/lib/avatar/avatar";
-import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled  } from '@ant-design/icons';
+import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled,EyeOutlined  } from '@ant-design/icons';
 import React from "react";
 const {host} = properties;
 
@@ -24,13 +24,19 @@ const Posts = ({postsData})=>{
     const [likes, setLikes] = useState(0);
     const [dislikes, setDislikes] = useState(0);
     const [action, setAction] = useState(null);
-    let token ="";
+
     if(!role)
         history.push("/login");
-    if(cookies.ilyToken != null)
-        token = cookies.ilyToken;
 
 
+    //update forum views
+    useEffect(()=>{
+        fetch(`${host}/api/v1/forums/updateViews/${forumId}`,
+    {method:"get",headers: {
+        'Authorization': cookies.ilyToken
+    }});
+    },[cookies.ilyToken,forumId]);
+    
     // sleep time expects milliseconds
     function sleep (time) {
         return new Promise((resolve) => setTimeout(resolve, time));
@@ -71,6 +77,12 @@ const Posts = ({postsData})=>{
             <span className="comment-action">{dislikes}</span>
           </span>
         </Tooltip>,
+        <Tooltip key="comment-basic-views" title="views">
+        <span>
+          {React.createElement(EyeOutlined)}
+          <span>0</span>
+        </span>
+      </Tooltip>,
         <span key="comment-basic-reply-to">Reply to</span>,
       ];
 
@@ -108,7 +120,7 @@ const Posts = ({postsData})=>{
                         datetime={<span>{post.postDate}</span>}
                         avatar=
                             {post.user.avatar ? 
-                                <img src={`${host}/viewFile/${post.user.avatar}`} width="50" alt="avatar"/>
+                                <img src={`${host}/upload/viewFile/${post.user.avatar}`} width="50" alt="avatar"/>
                             :
                                 <Avatar
                                 src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
@@ -127,7 +139,7 @@ const Posts = ({postsData})=>{
                 
             </>
 }
-            {role==="ADMIN" ? <>
+            {role ? <>
 
             <button className="btn btn-outline-success mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#addPost" aria-expanded="false" aria-controls="addPost" onClick={()=>{sleep(200).then(()=>{window.scrollTo(0,document.body.scrollHeight)})}}>Post a Question</button>
 

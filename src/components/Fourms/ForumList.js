@@ -8,6 +8,22 @@ import ForumColumn from "./ForumColumn";
 import { MessageOutlined, LikeOutlined, StarOutlined, EyeOutlined } from '@ant-design/icons';
 import React from "react";
 
+function writeNumber(number){
+    if(number === null)
+        return 0;
+    if(number>=1000000000000)
+        return number/1000000000000+"T";
+    if(number>=1000000000)
+        return number/1000000000+"B";
+    if(number>=1000000)
+        return number/1000000+"M";
+    if(number>=1000)
+        return number/1000+"K";  
+    
+    return number;
+}
+
+//todo tomorrow fix the bug where number of comments keeps getting rendered over and over and over again as you type
 const ForumList = ({forumData}) =>{
     const [forums,setForums] =  useState(forumData);
     const [role,] = useContext(UserContext);
@@ -15,7 +31,6 @@ const ForumList = ({forumData}) =>{
     const [content, setContent] = useState("");
     const [cookies,] = useCookies([]);
     const userId = cookies.principal_id;
-    const [doForumsExist,setDoForumsExist] = useState(false);
     const {host} = properties;
     
     const history = useHistory();
@@ -23,12 +38,6 @@ const ForumList = ({forumData}) =>{
     if(!cookies.ilyToken)
         history.push("/login");
         
-    useEffect(()=>{
-        if(forums.length === 0)
-            setDoForumsExist(false);
-        else
-            setDoForumsExist(true);
-    },[forums]);
 
     useEffect(()=>{
         setForums(forumData);
@@ -136,13 +145,6 @@ const ForumList = ({forumData}) =>{
     return (
         <div className="forums-container">
             <h2>Forums</h2>
-                {doForumsExist && forums.map((forum)=>{ 
-                    return (
-                        <ForumColumn key={forum.id} forum={forum}/>
-                    )     
-                })}
-
-
 
             <List
             itemLayout="vertical"
@@ -154,7 +156,7 @@ const ForumList = ({forumData}) =>{
                 <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />,
                 <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o" />,
                 <IconText icon={MessageOutlined} text={<ForumColumn key={item.id} forumId={item.id}/>} key="list-vertical-message" />,
-                <IconText icon={EyeOutlined} text="2.5K" key="list-vertical-message" />,
+                <IconText icon={EyeOutlined} text={writeNumber(item.views)} key="list-vertical-message" />,
                 role==="ADMIN" ?<>
                 <Popconfirm title="Sure to cancel?" onConfirm={()=>deleteForum(item.id)}><button className="btn btn-outline-danger">delete</button></Popconfirm>,
                  <button className="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target={"#updateForum"+item.id} value={item.id} onClick={()=>fillStateVariables(item.title,item.content)}>edit</button></>:""

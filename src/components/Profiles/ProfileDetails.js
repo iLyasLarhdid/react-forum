@@ -1,4 +1,3 @@
-import { useCookies } from "react-cookie";
 import { useQuery } from "react-query";
 import properties from "../../properties";
 const {host} = properties;
@@ -10,8 +9,6 @@ const fetchData = async (key)=>{
 }
 
 const ProfileDetails = ({profileData})=>{
-    const [cookies,] = useCookies();
-
 
     const {data,isLoading} = useQuery(['forumId',profileData],fetchData,{keepPreviousData:false})
 
@@ -22,9 +19,9 @@ const ProfileDetails = ({profileData})=>{
     return(<div className="container">
     <div className="row">
         
-        {cookies.principal_avatar?<span className="col-6">
-            <img src={cookies.principal_avatar} className="img-thumbnail"  width="300px" alt="avatar"/>
-        </span>:<></>}
+        <span className="col-6">
+        <img src={`${host}/upload/viewFile/${profileData.avatar}`} width="250" alt="avatar"/>
+        </span>
         <div  className="container col-6">
             <div>{profileData.id}</div><div>{profileData.firstName}</div>
             <div>{profileData.email}</div>

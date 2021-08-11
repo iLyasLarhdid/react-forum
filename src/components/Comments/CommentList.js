@@ -57,7 +57,7 @@ const CommentList = ()=>{
                         datetime={<span>{data.postDate}</span>}
                         avatar=
                             {data.user.avatar ? 
-                                <img src={`${host}/viewFile/${data.user.avatar}`} width="50" alt="avatar"/>
+                                <img src={`${host}/upload/viewFile/${data.user.avatar}`} width="50" alt="avatar"/>
                             :
                                 <Avatar
                                 src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"

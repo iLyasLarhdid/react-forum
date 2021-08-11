@@ -27,7 +27,7 @@ const ForumDetails = () =>{
         {isLoading && <div><Skeleton active/></div>}
         {data && 
             <div>
-                <h5>forums : </h5>
+                <h5>forum : </h5>
                 <List.Item >
                 <List.Item.Meta title={data.title} description={data.content} />
                 </List.Item>

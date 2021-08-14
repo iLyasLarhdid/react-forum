@@ -36,6 +36,8 @@ const Posts = ({postsData})=>{
     const history = useHistory();
     let [doPostsExist,setDoPostsExist] = useState(false);
 
+    var Filter = require('bad-words'),
+    filter = new Filter();
 
     if(!role)
         history.push("/login");
@@ -196,7 +198,7 @@ const Posts = ({postsData})=>{
                                 />
                             }
                         
-                        content={<p><Link to={`/posts/${post.id}`}>{post.content}</Link></p>}
+                        content={<p><Link to={`/posts/${post.id}`}>{filter.clean(post.content)}</Link></p>}
                     >
                         {/* you can post sub comments here */}
                     </Comment>

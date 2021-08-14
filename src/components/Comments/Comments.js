@@ -37,6 +37,9 @@ const Comments =({commentsData})=>{
     const history = useHistory();
     const {host} = properties;
 
+    var Filter = require('bad-words'),
+    filter = new Filter();
+
     useEffect(()=>{
         if(comments.length === 0)
             setDoCommentsExist(false);
@@ -172,7 +175,7 @@ const Comments =({commentsData})=>{
                                 />
                             }
                         
-                        content={<p>{comment.comment}</p>}
+                        content={<p>{filter.clean(comment.comment)}</p>}
                     >
                         {/* you can post sub comments here */}
                     </Comment>

@@ -21,6 +21,8 @@ const ForumDetails = () =>{
     const [posts,isPending,error] = useFetch(url);
     
     console.log(posts);
+    var Filter = require('bad-words'),
+    filter = new Filter();
    
     return (
     <div className="container">
@@ -29,7 +31,7 @@ const ForumDetails = () =>{
             <div>
                 <h5>forum : </h5>
                 <List.Item >
-                <List.Item.Meta title={data.title} description={data.content} />
+                <List.Item.Meta title={filter.clean(data.title)} description={filter.clean(data.content)} />
                 </List.Item>
             </div>}
 

@@ -31,6 +31,9 @@ const ForumList = ({forumData}) =>{
     const [cookies,] = useCookies([]);
     const userId = cookies.principal_id;
     const {host} = properties;
+    var Filter = require('bad-words'),
+    filter = new Filter();
+    //console.log(filter.clean("Don't be an ash0le"));
     
     const history = useHistory();
 
@@ -178,8 +181,8 @@ const ForumList = ({forumData}) =>{
               }
             >
                 <List.Item.Meta
-                title={<Link to={`/forums/${item.id}`}>{item.title}</Link>}
-                description={<Link to={`/forums/${item.id}`}>{item.content}</Link>}
+                title={<Link to={`/forums/${item.id}`}>{filter.clean(item.title)}</Link>}
+                description={<Link to={`/forums/${item.id}`}>{filter.clean(item.content)}</Link>}
                 />
 
                 {/* modal for uodating the forum                     */}

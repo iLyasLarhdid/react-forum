@@ -1,4 +1,4 @@
-import { Dropdown, List,message,Popconfirm, Space, Menu } from "antd";
+import { Dropdown, List,message,Popconfirm, Space, Menu, Button } from "antd";
 import { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { Link, useHistory } from "react-router-dom";
@@ -151,6 +151,7 @@ const ForumList = ({forumData}) =>{
             renderItem={item => (
             <List.Item 
             id={"row"+item.id}
+            bordered={true}
             actions={[
                 <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />,
                 <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o" />,
@@ -161,13 +162,20 @@ const ForumList = ({forumData}) =>{
                     <Menu.Item danger>
                       <Popconfirm title="Sure to cancel?" onConfirm={()=>deleteForum(item.id)}>delete</Popconfirm>
                     </Menu.Item>
-                    <Menu.Item><a data-bs-toggle="modal" data-bs-target={"#updateForum"+item.id} value={item.id} onClick={()=>fillStateVariables(item.title,item.content)}>edit</a></Menu.Item>
+                    <Menu.Item><span data-bs-toggle="modal" data-bs-target={"#updateForum"+item.id} value={item.id} onClick={()=>fillStateVariables(item.title,item.content)}>edit</span></Menu.Item>
                   </Menu>}>
-                 <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                   Hover me <DownOutlined />
-                 </a>
+                 <Button type="link" onClick={e => e.preventDefault()}>
+                    Hover me <DownOutlined />
+                </Button>
                </Dropdown>:"",
               ]}
+            extra={
+                <img
+                  width={272}
+                  alt="logo"
+                  src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
+                />
+              }
             >
                 <List.Item.Meta
                 title={<Link to={`/forums/${item.id}`}>{item.title}</Link>}

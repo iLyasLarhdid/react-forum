@@ -30,7 +30,7 @@ const NavBar = () =>{
           {role ? 
           <>
             
-              welcome {cookies.principal_first_name}
+              welcome <Link to={`/profile/${cookies.principal_id}`}>{cookies.principal_first_name}</Link>
             
           </>
           : ""

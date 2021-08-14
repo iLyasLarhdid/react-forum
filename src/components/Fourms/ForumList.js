@@ -1,11 +1,10 @@
-import { List,message,Popconfirm, Space } from "antd";
+import { Dropdown, List,message,Popconfirm, Space, Menu } from "antd";
 import { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { Link, useHistory } from "react-router-dom";
 import { UserContext } from "../../hooks/UserContext";
 import properties from "../../properties";
-import ForumColumn from "./ForumColumn";
-import { MessageOutlined, LikeOutlined, StarOutlined, EyeOutlined } from '@ant-design/icons';
+import { MessageOutlined, LikeOutlined, StarOutlined, EyeOutlined,DownOutlined } from '@ant-design/icons';
 import React from "react";
 
 function writeNumber(number){
@@ -155,16 +154,24 @@ const ForumList = ({forumData}) =>{
             actions={[
                 <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />,
                 <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o" />,
-                <IconText icon={MessageOutlined} text={<ForumColumn key={item.id} forumId={item.id}/>} key="list-vertical-message" />,
+                <IconText icon={MessageOutlined} text={writeNumber(item.numberOfPosts)} key="list-vertical-message" />,
                 <IconText icon={EyeOutlined} text={writeNumber(item.views)} key="list-vertical-message" />,
-                role==="ADMIN" ?<>
-                <Popconfirm title="Sure to cancel?" onConfirm={()=>deleteForum(item.id)}><button className="btn btn-outline-danger">delete</button></Popconfirm>,
-                 <button className="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target={"#updateForum"+item.id} value={item.id} onClick={()=>fillStateVariables(item.title,item.content)}>edit</button></>:""
+                role==="ADMIN" ?
+                 <Dropdown overlay={<Menu>
+                    <Menu.Item danger>
+                      <Popconfirm title="Sure to cancel?" onConfirm={()=>deleteForum(item.id)}>delete</Popconfirm>
+                    </Menu.Item>
+                    <Menu.Item><a data-bs-toggle="modal" data-bs-target={"#updateForum"+item.id} value={item.id} onClick={()=>fillStateVariables(item.title,item.content)}>edit</a></Menu.Item>
+                  </Menu>}>
+                 <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                   Hover me <DownOutlined />
+                 </a>
+               </Dropdown>:"",
               ]}
             >
                 <List.Item.Meta
                 title={<Link to={`/forums/${item.id}`}>{item.title}</Link>}
-                description={item.content}
+                description={<Link to={`/forums/${item.id}`}>{item.content}</Link>}
                 />
 
                 {/* modal for uodating the forum                     */}
@@ -186,7 +193,7 @@ const ForumList = ({forumData}) =>{
                                         </div>
                                     </div>
                                     <div>
-                                        <textarea minLength="10" required className="form-control" id="content" placeholder="content" value={content} onChange={(e)=>setContent(e.target.value)} rows="5" maxLength="255"></textarea>
+                                        <textarea minLength="10" required className="form-control" id="content" placeholder="content" value={content} onChange={(e)=>setContent(e.target.value)} rows="5"></textarea>
                                     </div>  
                                       
                                 </div>
@@ -218,7 +225,7 @@ const ForumList = ({forumData}) =>{
                     </div>
                 </div>
                 <div className="col-md-7">
-                    <textarea minLength="10" required className="form-control" id="content" placeholder="content" value={content} onChange={(e)=>setContent(e.target.value)} rows="5" maxLength="255"></textarea>
+                    <textarea minLength="10" required className="form-control" id="content" placeholder="content" value={content} onChange={(e)=>setContent(e.target.value)} rows="5" ></textarea>
                 </div>
                 <div>
                     <button className="btn btn-success mb-5" type="submit">submit</button>

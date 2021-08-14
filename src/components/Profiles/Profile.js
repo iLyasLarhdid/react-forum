@@ -42,8 +42,8 @@ const Profile = ()=>{
     <div className="forums-container">
         <h2>profile</h2>
         <form onSubmit={uploadFile}>
-            <input type="file" name="inpFile" onChange={(e)=>{setFile(e.target.files[0])}}/>
-            <button type="submit">upload</button>
+            {data && cookies.principal_id === data.id ? <><input type="file" name="inpFile" onChange={(e)=>{setFile(e.target.files[0])}}/><button type="submit">upload</button></>:<></>}
+            
         </form>
         {isPending? <div>loading.....</div>:<></>}
         {data?<ProfileDetails profileData={data}/>:<></>}

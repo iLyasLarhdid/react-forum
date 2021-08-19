@@ -28,6 +28,9 @@ const ForumList = ({forumData}) =>{
     const [role,] = useContext(UserContext);
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
+    const [forumId, setForumId] = useState("");
+    const [titleUpdate, setTitleUpdate] = useState("");
+    const [contentUpdate, setContentUpdate] = useState("");
     const [cookies,] = useCookies([]);
     const userId = cookies.principal_id;
     const {host} = properties;
@@ -51,9 +54,10 @@ const ForumList = ({forumData}) =>{
     }
 
     //filling the state variables for edit
-    const fillStateVariables = (title,content)=>{
-            setTitle(title);
-            setContent(content);
+    const fillStateVariables = (title,content,forumId)=>{
+            setTitleUpdate(title);
+            setContentUpdate(content);
+            setForumId(forumId);
     }
 
     const IconText = ({ icon, text }) => (
@@ -66,8 +70,7 @@ const ForumList = ({forumData}) =>{
     //update forum
     const updateForum = (e)=>{
         e.preventDefault();
-        const id = e.target.name;
-        document.querySelector("#updateForum"+id).click();
+        document.querySelector("#updateForum").click();
 
         if(title.length < 5||content.length < 10)
             return;
@@ -81,7 +84,7 @@ const ForumList = ({forumData}) =>{
                 'Content-Type' : 'application/json',
                 'Authorization': cookies.ilyToken
             },
-            body:JSON.stringify({id,title,content,userId})
+            body:JSON.stringify({forumId,title,content,userId})
         })
         .then(response => response.json()
         .then(data=>{
@@ -165,7 +168,7 @@ const ForumList = ({forumData}) =>{
                     <Menu.Item danger>
                       <Popconfirm title="Sure to cancel?" onConfirm={()=>deleteForum(item.id)}>delete</Popconfirm>
                     </Menu.Item>
-                    <Menu.Item><span data-bs-toggle="modal" data-bs-target={"#updateForum"+item.id} value={item.id} onClick={()=>fillStateVariables(item.title,item.content)}>edit</span></Menu.Item>
+                    <Menu.Item><span data-bs-toggle="modal" data-bs-target="#updateForum" value={item.id} onClick={()=>fillStateVariables(item.title,item.content,item.id)}>edit</span></Menu.Item>
                   </Menu>}>
                  <Button type="link" onClick={e => e.preventDefault()} style={{ color:"black" }}>
                     Hover me <DownOutlined />
@@ -177,10 +180,35 @@ const ForumList = ({forumData}) =>{
                 title={<Link to={`/forums/${item.id}`}>{filter.clean(item.title)}</Link>}
                 description={<Link to={`/forums/${item.id}`} style={{ color:"black" }}>{filter.clean(item.content)}</Link>}
                 />
+            </List.Item>
+            )}
+        />
 
-                {/* modal for uodating the forum                     */}
-                <form onSubmit={updateForum} name={item.id}>
-                        <div className="modal fade" id={"updateForum"+item.id} tabIndex="-1" aria-labelledby="updateForumLable" aria-hidden="true">
+        {role==="ADMIN" ? <>
+            <button className="btn btn-outline-success mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#addForum" aria-expanded="false" aria-controls="addForum" onClick={()=>{sleep(250).then(()=>{window.scrollTo(0,document.body.scrollHeight)})}}>Add forum</button>
+
+            <form className="collapse multi-collapse" id="addForum" onSubmit={addForum}>
+            <div className="row g-2">
+                <div className="col-md-7">
+                    <div className="form-floating">
+                    <input type="text" required minLength="5" className="form-control" id="title" placeholder="Title" value={title} onChange={(e)=>setTitle(e.target.value)}/>
+                    <label htmlFor="title">Title</label>
+                    </div>
+                </div>
+                <div className="col-md-7">
+                    <textarea minLength="10" required className="form-control" id="content" placeholder="content" value={content} onChange={(e)=>setContent(e.target.value)} rows="5" ></textarea>
+                </div>
+                <div>
+                    <button className="btn btn-success mb-5" type="submit">submit</button>
+                </div>            
+            </div>
+            </form>
+            </>:""}
+
+            {forumId && <>
+            {/* modal for uodating the forum                     */}
+            <form onSubmit={updateForum} name={forumId}>
+                        <div className="modal fade" id={"updateForum"} tabIndex="-1" aria-labelledby="updateForumLable" aria-hidden="true">
                         <div className="modal-dialog">
                             <div className="modal-content">
                             <div className="modal-header">
@@ -192,14 +220,13 @@ const ForumList = ({forumData}) =>{
                                 <div className="row g-2">
                                     <div>
                                         <div className="form-floating">
-                                        <input type="text" required minLength="5" className="form-control" id="title" placeholder="Title" value={title} onBlur={(e)=>setTitle(e.target.value)}/>
+                                        <input type="text" required minLength="5" className="form-control" id="title" placeholder="Title" value={titleUpdate} onChange={(e)=>setTitleUpdate(e.target.value)}/>
                                         <label htmlFor="title">Title</label>
                                         </div>
                                     </div>
                                     <div>
-                                        <textarea minLength="10" required className="form-control" id="content" placeholder="content" value={content} onBlur={(e)=>setContent(e.target.value)} rows="5"></textarea>
-                                    </div>  
-                                      
+                                        <textarea minLength="10" required className="form-control" id="content" placeholder="content" value={contentUpdate} onChange={(e)=>setContentUpdate(e.target.value)} rows="5"></textarea>
+                                    </div>     
                                 </div>
                                 
                             </div>
@@ -212,32 +239,7 @@ const ForumList = ({forumData}) =>{
                         </div>
                         </div>
                         </form>
-
-            </List.Item>
-            )}
-        />
-
-        {role==="ADMIN" ? <>
-            <button className="btn btn-outline-success mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#addForum" aria-expanded="false" aria-controls="addForum" onClick={()=>{sleep(250).then(()=>{window.scrollTo(0,document.body.scrollHeight)})}}>Add forum</button>
-
-            <form className="collapse multi-collapse" id="addForum" onSubmit={addForum}>
-            <div className="row g-2">
-                <div className="col-md-7">
-                    <div className="form-floating">
-                    <input type="text" required minLength="5" className="form-control" id="title" placeholder="Title" value={title} onBlur={(e)=>setTitle(e.target.value)}/>
-                    <label htmlFor="title">Title</label>
-                    </div>
-                </div>
-                <div className="col-md-7">
-                    <textarea minLength="10" required className="form-control" id="content" placeholder="content" value={content} onBlur={(e)=>setContent(e.target.value)} rows="5" ></textarea>
-                </div>
-                <div>
-                    <button className="btn btn-success mb-5" type="submit">submit</button>
-                </div>            
-            </div>
-            </form>
-            </>:""}
-
+            </>}
         </div>
     );
 }

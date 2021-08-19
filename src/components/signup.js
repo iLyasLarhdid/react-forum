@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useHistory } from "react-router";
 import { UserContext } from "../hooks/UserContext";
 import properties from "../properties";
-import { Spin } from "antd";
+import {Spin } from "antd";
 const Signup = ()=>{
 
     const [role,] = useContext(UserContext);
@@ -99,9 +99,10 @@ const Signup = ()=>{
                 <div className="form-group mb-2">
                     {password===confirm 
                     ? 
-                        <button type="submit" className="btn btn-success">{isButtonLoading ? <Spin/>:"registered"}</button>
+                        <button type="submit" className="btn btn-primary">{isButtonLoading ? <Spin>loading..</Spin>:"registered"}</button>
                     :
                         <button disabled type="submit" className="btn btn-success">registered</button>}
+                        
                 </div>
             </div>
             </form>

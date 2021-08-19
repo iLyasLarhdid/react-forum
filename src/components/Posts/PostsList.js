@@ -37,7 +37,7 @@ const ForumDetails = () =>{
 
         <div>{error && <div>{error}</div>}</div>
         <div>{isPending && <div><Skeleton active/><Skeleton active/><Skeleton active/></div>}</div>
-        <div>{posts && <Posts postsData={posts}/>}</div>
+        <div>{posts && <Posts postsData={posts} isFromProfile={false}/>}</div>
     </div>)
 }
 export default ForumDetails;

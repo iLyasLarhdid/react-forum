@@ -150,11 +150,11 @@ const ForumList = ({forumData}) =>{
 
             <List
             itemLayout="vertical"
+            style={{ background:"#f8f9fa",padding:"2rem",borderRadius:"10px" }}
             dataSource={forums}
             renderItem={item => (
             <List.Item 
             id={"row"+item.id}
-            bordered={true}
             actions={[
                 <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />,
                 <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o" />,
@@ -167,7 +167,7 @@ const ForumList = ({forumData}) =>{
                     </Menu.Item>
                     <Menu.Item><span data-bs-toggle="modal" data-bs-target={"#updateForum"+item.id} value={item.id} onClick={()=>fillStateVariables(item.title,item.content)}>edit</span></Menu.Item>
                   </Menu>}>
-                 <Button type="link" onClick={e => e.preventDefault()}>
+                 <Button type="link" onClick={e => e.preventDefault()} style={{ color:"black" }}>
                     Hover me <DownOutlined />
                 </Button>
                </Dropdown>:"",
@@ -175,7 +175,7 @@ const ForumList = ({forumData}) =>{
             >
                 <List.Item.Meta
                 title={<Link to={`/forums/${item.id}`}>{filter.clean(item.title)}</Link>}
-                description={<Link to={`/forums/${item.id}`}>{filter.clean(item.content)}</Link>}
+                description={<Link to={`/forums/${item.id}`} style={{ color:"black" }}>{filter.clean(item.content)}</Link>}
                 />
 
                 {/* modal for uodating the forum                     */}

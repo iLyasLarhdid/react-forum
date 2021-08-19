@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled,CommentOutlined} from '@ant-design/icons';
 import { useState } from "react";
 
-const {host} = properties;
+const {host,avatarProp} = properties;
 
 function writeNumber(number){
     if(number === null || typeof number ==="undefined")
@@ -136,7 +136,7 @@ const CommentList = ()=>{
                                 <img src={`${host}/upload/viewFile/${data.user.avatar}`} width="50" alt="avatar"/>
                             :
                                 <Avatar
-                                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                                src={avatarProp}
                                 alt="avatar"
                                 />
                             }

@@ -7,7 +7,7 @@ import properties from "../../properties";
 import Avatar from "antd/lib/avatar/avatar";
 import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled,CommentOutlined} from '@ant-design/icons';
 import React from "react";
-const {host} = properties;
+const {host,avatarProp} = properties;
 
 function writeNumber(number){
     if(number === null || typeof number ==="undefined")
@@ -25,7 +25,7 @@ function writeNumber(number){
 }
 
 
-const Posts = ({postsData})=>{
+const Posts = ({postsData,isFromProfile})=>{
     const {id} = useParams();
     const forumId=id;
     const [posts,setPosts] = useState(postsData.content);
@@ -166,7 +166,7 @@ const Posts = ({postsData})=>{
                         <Comment
                         key="parentComment"
                         actions={[
-                            <Tooltip key="comment-basic-like" title="double click">
+                            <Tooltip key="comment-basic-like" title="like">
                               <span onClick={()=>like(post.id)}>
                                 {post.likedByPrincipal ? <LikeFilled/> :<LikeOutlined/>}
                                 <span className="comment-action">{writeNumber(post.numberOfLikes)}</span>
@@ -194,12 +194,12 @@ const Posts = ({postsData})=>{
                                 <img src={`${host}/upload/viewFile/${post.user.avatar}`} width="50" alt="avatar"/>
                             :
                                 <Avatar
-                                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                                src={avatarProp}
                                 alt="avatar"
                                 />
                             }
                         
-                        content={<p><Link to={`/posts/${post.id}`}>{filter.clean(post.content)}</Link></p>}
+                        content={<p><Link to={`/posts/${post.id}`} style={{ color:'black' }}>{filter.clean(post.content)}</Link></p>}
                     >
                         {/* you can post sub comments here */}
                     </Comment>
@@ -210,7 +210,7 @@ const Posts = ({postsData})=>{
                 
             </>
 }
-            {role ? <>
+            {role && !isFromProfile ? <>
 
             <button className="btn btn-outline-success mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#addPost" aria-expanded="false" aria-controls="addPost" onClick={()=>{sleep(200).then(()=>{window.scrollTo(0,document.body.scrollHeight)})}}>Post a Question</button>
 

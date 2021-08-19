@@ -35,7 +35,7 @@ const Comments =({commentsData})=>{
     const [cookies,] = useCookies([]);
     const userId = cookies.principal_id;
     const history = useHistory();
-    const {host} = properties;
+    const {host,avatarProp} = properties;
 
     var Filter = require('bad-words'),
     filter = new Filter();
@@ -170,7 +170,7 @@ const Comments =({commentsData})=>{
                                 <img src={`${host}/upload/viewFile/${comment.user.avatar}`} width="50" alt="avatar"/>
                             :
                                 <Avatar
-                                src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                                src={avatarProp}
                                 alt="avatar"
                                 />
                             }

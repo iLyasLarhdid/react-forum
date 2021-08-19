@@ -1,4 +1,4 @@
-import { Comment, Empty, Tooltip} from "antd";
+import { Comment, Empty, Tooltip, message} from "antd";
 import { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { Link, useHistory, useParams } from "react-router-dom";
@@ -138,6 +138,7 @@ const Posts = ({postsData,isFromProfile})=>{
     //adding new post
     const addPost = (e)=>{
         e.preventDefault();
+        message.loading('Adding....',"updating");
         const url = `${host}/api/v1/posts`;
         fetch(url,{
             method:"post",
@@ -147,13 +148,24 @@ const Posts = ({postsData,isFromProfile})=>{
             },
             body:JSON.stringify({content,forumId,userId})
         })
-        .then(response => response.json().then(data=>{
+        .then(response => {
+            if(!response.ok){
+                throw Error("something went wrong");
+            }
+            return response.json()}
+            ).then(data=>{
+            message.success({content:'Updated successfully', key:"updating", duration:2});
+            console.log("post====>");
+            console.log(data);
             //const index = JSON.stringify(data);
             setPosts([...posts,data])
             setContent("");
-            console.log("post====>");
-            console.log(data);
-        }));
+        }).catch(err=>{
+            message.error({content:'Updated successfully', key:"updating", duration:2});
+            console.log("error while posting");
+            console.log(err);
+            setContent("");
+        });
     }
     return (
         <div className="forums-container">

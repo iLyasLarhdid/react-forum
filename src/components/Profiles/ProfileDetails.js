@@ -1,10 +1,13 @@
 import properties from "../../properties";
 import React, { useState } from 'react';
-import { Upload,Button,Tooltip,message,Image, Skeleton } from 'antd';
+import { Upload,Button,Tooltip,message,Image, Skeleton, Statistic } from 'antd';
 import ImgCrop from 'antd-img-crop';
 import { useCookies } from "react-cookie";
 import useFetch from "../../hooks/useFetch";
 import Posts from "../Posts/Posts";
+import { CommentOutlined } from '@ant-design/icons';
+import ProfileSideBar from "./profileSideBar";
+
 const {host,avatarProp} = properties;
 
 const ProfileDetails = ({profile})=>{
@@ -85,6 +88,7 @@ const ProfileDetails = ({profile})=>{
     <div className="row">
         
         <div className="col-lg-4 col-xl-3" style={{ background:"#edeff0", borderRadius:"10px", marginRight:"1rem", padding:"1rem",marginBottom:"1rem"}}>
+
         <Tooltip key="comment-basic-like" title="click to change avatar"><Button type="link" onClick={()=>setShowUploadField(!showUploadField)}>upload picture </Button></Tooltip>
 
             {profileData.avatar ? 
@@ -122,8 +126,9 @@ const ProfileDetails = ({profile})=>{
                     >
                     Start Upload
             </Button>}</>}
-            <div>{profileData.firstName}</div>
+            <div><b>{profileData.firstName} {profileData.lastName}</b></div>
             <div>{profileData.email}</div>
+            {posts && <div><Tooltip key="comment-basic-like" title="Total number of posts"><Statistic title="Total number of posts" value={posts.numberOfElements} prefix={<CommentOutlined />} /></Tooltip></div>}
         </div>
         <div  className="col-lg-6 col-xl-5" style={{ background:"#FDFAF9", borderRadius:"10px", marginRight:"1rem", padding:"1rem",marginBottom:"1rem"}}>
             
@@ -133,13 +138,9 @@ const ProfileDetails = ({profile})=>{
         </div>
 
         <div className="col-lg-4 col-xl-3" style={{ background:"#edeff0", borderRadius:"10px", padding:"1rem",marginBottom:"1rem"}}>
-            <div>online friends</div>
-            <div>online friends</div>
-            <div>online friends</div>
-            <div>online friends</div>
-            <div>online friends</div>
-            <div>online friends</div>
-            <div>online friends</div>
+            <h5>Friends : </h5>
+            <p>this is just a demo data, before implementing friendships system in the backend and</p>
+            <ProfileSideBar/>
         </div>
         
     </div>

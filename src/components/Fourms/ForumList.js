@@ -192,12 +192,12 @@ const ForumList = ({forumData}) =>{
                                 <div className="row g-2">
                                     <div>
                                         <div className="form-floating">
-                                        <input type="text" required minLength="5" className="form-control" id="title" placeholder="Title" value={title} onChange={(e)=>setTitle(e.target.value)}/>
+                                        <input type="text" required minLength="5" className="form-control" id="title" placeholder="Title" value={title} onBlur={(e)=>setTitle(e.target.value)}/>
                                         <label htmlFor="title">Title</label>
                                         </div>
                                     </div>
                                     <div>
-                                        <textarea minLength="10" required className="form-control" id="content" placeholder="content" value={content} onChange={(e)=>setContent(e.target.value)} rows="5"></textarea>
+                                        <textarea minLength="10" required className="form-control" id="content" placeholder="content" value={content} onBlur={(e)=>setContent(e.target.value)} rows="5"></textarea>
                                     </div>  
                                       
                                 </div>
@@ -224,12 +224,12 @@ const ForumList = ({forumData}) =>{
             <div className="row g-2">
                 <div className="col-md-7">
                     <div className="form-floating">
-                    <input type="text" required minLength="5" className="form-control" id="title" placeholder="Title" value={title} onChange={(e)=>setTitle(e.target.value)}/>
+                    <input type="text" required minLength="5" className="form-control" id="title" placeholder="Title" value={title} onBlur={(e)=>setTitle(e.target.value)}/>
                     <label htmlFor="title">Title</label>
                     </div>
                 </div>
                 <div className="col-md-7">
-                    <textarea minLength="10" required className="form-control" id="content" placeholder="content" value={content} onChange={(e)=>setContent(e.target.value)} rows="5" ></textarea>
+                    <textarea minLength="10" required className="form-control" id="content" placeholder="content" value={content} onBlur={(e)=>setContent(e.target.value)} rows="5" ></textarea>
                 </div>
                 <div>
                     <button className="btn btn-success mb-5" type="submit">submit</button>

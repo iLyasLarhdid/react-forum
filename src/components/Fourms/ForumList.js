@@ -172,13 +172,6 @@ const ForumList = ({forumData}) =>{
                 </Button>
                </Dropdown>:"",
               ]}
-            extra={
-                <img
-                  width={272}
-                  alt="logo"
-                  src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-                />
-              }
             >
                 <List.Item.Meta
                 title={<Link to={`/forums/${item.id}`}>{filter.clean(item.title)}</Link>}
@@ -191,7 +184,7 @@ const ForumList = ({forumData}) =>{
                         <div className="modal-dialog">
                             <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="updateForumLable">Edit forum {item.id}</h5>
+                                <h5 className="modal-title" id="updateForumLable">Edit forum</h5>
                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div className="modal-body">

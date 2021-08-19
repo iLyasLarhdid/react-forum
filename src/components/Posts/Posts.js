@@ -164,6 +164,7 @@ const Posts = ({postsData})=>{
             {posts.map((post)=>{
                     return (
                         <Comment
+                        key="parentComment"
                         actions={[
                             <Tooltip key="comment-basic-like" title="double click">
                               <span onClick={()=>like(post.id)}>

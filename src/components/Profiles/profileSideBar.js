@@ -1,6 +1,8 @@
 import Avatar from "antd/lib/avatar/avatar";
 import { Badge } from 'antd';
 import { Link } from "react-router-dom";
+import { useQuery } from "react-query";
+import properties from "../../properties";
 
 const {host} = properties;
 const url = `${host}/api/v1/users/page/0`;
@@ -11,7 +13,7 @@ const fetchData = async (key)=>{
 }
 const ProfileSideBar = ()=>{
 
-    const {data,isLoading} = useQuery(['page',id],fetchData,{keepPreviousData:true})
+    const {data,isLoading} = useQuery(['page',0],fetchData,{keepPreviousData:true})
 
     return(
     <>

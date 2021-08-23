@@ -11,6 +11,7 @@ import Signup from './components/signup';
 import ForumDetails from './components/Posts/PostsList';
 import Profile from './components/Profiles/Profile';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import Messages from './components/messages/Messages';
 
 function App() {
   const [cookies,] = useCookies([]);
@@ -36,6 +37,9 @@ function App() {
         </Route>
         <Route exact path="/profile/:id">
           <Profile/>
+        </Route>
+        <Route exact path="/messenger/">
+          <Messages/>
         </Route>
         <Route exact path="/login">
           <Login/>

@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { useHistory } from "react-router";
 import { UserContext } from "../hooks/UserContext";
 import properties from "../properties";
-import {Spin } from "antd";
+import { Form, Input, Button,message } from 'antd';
+import { UserOutlined, LockOutlined,MailOutlined } from '@ant-design/icons';
 const Signup = ()=>{
 
     const [role,] = useContext(UserContext);
@@ -13,12 +14,6 @@ const Signup = ()=>{
         history.push("/");
 
     const url = `${host}/api/v1/users/register`;
-    const [firstName,setFirstName] = useState("");
-    const [lastName,setLastName] = useState("");
-    const [email,setEmail] = useState("");
-    const [password,setPassword] = useState("");
-    const [confirm,setConfirm] = useState("");
-    const [isPending,setIsPending] = useState();
     const [error,setError] = useState(null);
     const [data,setData] = useState(null);
     const [isButtonLoading,setIsButtonLoading] = useState(false);
@@ -27,11 +22,14 @@ const Signup = ()=>{
         return new Promise((resolve)=>setTimeout(resolve,seconds));
     }
 
-    const register = (e)=>{
+    const onFinish = (values) => {
+        console.log('Success:', values);
         setIsButtonLoading(true);
-        setIsPending(true);
-        e.preventDefault();
-        if(password===confirm){
+        const firstName = values.firstName;
+        const lastName = values.lastName;
+        const email = values.email;
+        const password = values.password;
+        if(values.password === values.passwordConfirmation){
         fetch(url , {
             method:"POST",
             headers:{"Content-Type" : "application/json"},
@@ -42,20 +40,26 @@ const Signup = ()=>{
             return response.json()})
             .then(data=>{
                 setData(data);
-                setIsPending(false);
+                setIsButtonLoading(false);
                 setError(null);
+                message.success("check your email for confirmation");
                 sleep(1500).then(()=>{history.push("/login")});
             }).catch((err)=>{
-                setIsPending(false);
+                message.error("something went wrong!, try again");
+                setIsButtonLoading(false);
                 setError(err.message);
             })
         }
         else
-            setError("Mmmmm seriously!! did you just try to change disabled through inspect to see what happens")
-    }
+            setError("wait, what... how did you get here....HELP HELP A HACKER... CALL THE FBI")
+      };
+    
+      const onFinishFailed = (errorInfo) => {
+        console.log('Failed:', errorInfo);
+      };
 
     return (
-        <div className="card" style={{ margin:"auto", width:"30rem"}}>
+        <div className="card" style={{ margin:"auto", width:"20rem"}}>
             <div className="card-header">
                 <h4>Sign Up</h4>
             </div>
@@ -65,47 +69,62 @@ const Signup = ()=>{
                 
             <div className="container">
                 {data ? <h3 className="text-success">done</h3>:""}
-                {isPending && error ==null ? <h3 className="text-info">loading...</h3>:""}
-                {isPending && error ==null ? <Spin></Spin>:""}
-                {error!==null ? <h3 className="text-danger">{error}</h3>:""}
-            <form  onSubmit={register}>
-            <div className="row g-2">
-                <div className="form-group mb-3 col-md">
-                    <label className="control-label" htmlFor="firstName">first name</label>
-                    <input id="firstName" className="form-control" required autoFocus="autofocus" name="firstName" value={firstName} onChange={e=>setFirstName(e.target.value)}/>
-                </div>
+                {error!==null ? <b className="text-danger">{error}</b>:""}
+            <Form
+            name="basic"
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 18 }}
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+            >
+            <Form.Item
+                label="first name"
+                name="firstName"
+                rules={[{ required: true, message: 'Please input your first name!' }]}
+            >
+                <Input prefix={<UserOutlined className="site-form-item-icon" />}/>
+            </Form.Item>
+            <Form.Item
+                label="last name"
+                name="lastName"
+                rules={[{ required: true, message: 'Please input your last name!' }]}
+            >
+                <Input prefix={<UserOutlined className="site-form-item-icon" />}/>
+            </Form.Item>
+            <Form.Item
+                label="email"
+                name="email"
+                rules={[{ required: true, message: 'Please input your email!' }]}
+            >
+                <Input prefix={<MailOutlined className="site-form-item-icon" />}/>
+            </Form.Item>
+            <Form.Item
+                label="Password"
+                name="password"
+                rules={[{ required: true, message: 'Please input your password!' }]}
+            >
+                <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} />
+            </Form.Item>
+            <Form.Item
+                label="confirm"
+                name="passwordConfirmation"
+                rules={[{ required: true, message: 'Please retype your password!' },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue('password') === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error('The two passwords that you entered do not match!'));
+                  },
+                }),]}
+            >
+                <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} />
+            </Form.Item>
 
-                <div className="form-group mb-3 col-md">
-                    <label className="control-label" htmlFor="lastName">last name</label>
-                    <input id="lastName" className="form-control" required autoFocus="autofocus" name="lastName" value={lastName} onChange={e=>setLastName(e.target.value)}/>
-                </div>
-
-                <div className="form-group mb-3">
-                    <label className="control-label" htmlFor="email">email</label>
-                    <input id="email" className="form-control" required autoFocus="autofocus" name="email" value={email} onChange={e=>setEmail(e.target.value)}/>
-                </div>
-
-                <div className="form-group mb-3">
-                    <label className="control-label" htmlFor="password">password</label>
-                    <input type="password" id="password" className="form-control" required autoFocus="autofocus" name="password" value={password} onChange={e=>setPassword(e.target.value)}/>
-                </div>
-
-                <div className="form-group mb-3">
-                    <label className="control-label" htmlFor="confirm">confirm password</label>
-                    <input type="password" required id="confirm" className="form-control" autoFocus="autofocus" name="confirm" value={confirm} onChange={e=>setConfirm(e.target.value)}/>
-                    {password!==confirm && confirm?<span className="text-danger">incorrect</span>:""}
-                </div>
-
-                <div className="form-group mb-2">
-                    {password===confirm 
-                    ? 
-                        <button type="submit" className="btn btn-primary">{isButtonLoading ? <Spin>loading..</Spin>:"registered"}</button>
-                    :
-                        <button disabled type="submit" className="btn btn-success">registered</button>}
-                        
-                </div>
-            </div>
-            </form>
+            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                {isButtonLoading ? <Button type="primary" loading disabled>Loading</Button>:<Button type="primary" htmlType="submit">sign up</Button>}
+            </Form.Item>
+            </Form>
             </div>
 
 

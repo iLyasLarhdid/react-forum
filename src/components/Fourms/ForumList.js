@@ -40,7 +40,7 @@ const ForumList = ({forumData}) =>{
     
     const history = useHistory();
 
-    if(!cookies.ilyToken)
+    if(!cookies.ilyToken ||cookies.ilyToken ==null )
         history.push("/login");
         
 
@@ -72,11 +72,13 @@ const ForumList = ({forumData}) =>{
         e.preventDefault();
         document.querySelector("#updateForum").click();
 
-        if(title.length < 5||content.length < 10)
+        if(titleUpdate.length < 5||contentUpdate.length < 10)
             return;
 
         message.loading('updating....',"updating");
-
+        const title = titleUpdate;
+        const content = contentUpdate;
+        const id = forumId;
         const url = `${host}/api/v1/forums`;
         fetch(url,{
             method:"put",
@@ -84,7 +86,7 @@ const ForumList = ({forumData}) =>{
                 'Content-Type' : 'application/json',
                 'Authorization': cookies.ilyToken
             },
-            body:JSON.stringify({forumId,titleUpdate,contentUpdate,userId})
+            body:JSON.stringify({id,title,content,userId})
         })
         .then(response => response.json()
         .then(data=>{

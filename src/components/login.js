@@ -4,15 +4,14 @@ import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
 import { UserContext } from "../hooks/UserContext";
 import properties from "../properties";
-import { Button } from 'antd';
+import { Form, Input, Button } from 'antd';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
 const Login = ()=>{
     const {host} = properties;
     const url = `${host}/login`;
     const [cookie, setCookie] = useCookies([]);
     const [, setRole] = useContext(UserContext);
-    const [username,setUsername] = useState();
-    const [password,setPassword] = useState();
     const [error,setError] = useState(null);
     const [isButtonLoading,setIsButtonLoading] = useState(false);
     const history = useHistory();
@@ -20,22 +19,25 @@ const Login = ()=>{
     if(cookie.ilyToken)
         history.push("/");
 
-    const signIn = (e) => {
-        e.preventDefault();
-        setIsButtonLoading(true);
+    const onFinish = (values) => {
+            const username = values.username;
+            const password = values.password;
+            setIsButtonLoading(true);
         fetch(url,{
             method:"post",
             headers:{"Content-Type" : "application/json"},
             body:JSON.stringify({username,password})
         })
         .then(response => {
+            console.log(response);
             if(!response.ok)
                 throw Error("either check your email to activate your account or your email or password incorrect");
-            
-            const accessToken = response.headers.get("accessToken");
-            const refreshToken = response.headers.get("refreshToken");
-            setCookie("ilyToken",accessToken,{path:"/",maxAge:86400});
-            setCookie("ilyRefreshToken",refreshToken,{path:"/",maxAge:604800});
+            else{
+                const accessToken = response.headers.get("accessToken");
+                const refreshToken = response.headers.get("refreshToken");
+                setCookie("ilyToken",accessToken,{path:"/",maxAge:86400});
+                setCookie("ilyRefreshToken",refreshToken,{path:"/",maxAge:604800});
+            }
             setIsButtonLoading(false);
             return response.json();
         }).then(data=>{
@@ -56,31 +58,50 @@ const Login = ()=>{
             console.log(err.message);
             setError(err.message);
             setIsButtonLoading(false);
-        });
-    }
+        })
+          };
+        
+          const onFinishFailed = (errorInfo) => {
+            console.log('Failed:', errorInfo);
+          };
+
     
-        return (
+        return (<>
             <div className="card" style={{ margin:"auto",width:"20rem"}}>
             <div className="card-header">
                 <h4>Login</h4>
             </div>
             <div className="card-body">
                 
-                <div className="container mt-2">
-            <form onSubmit={signIn}>
-            {error && <h4 className="text-danger">{error}</h4>}
-            <div className="form-group mb-3">
-                <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
-                <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={username} onChange={(e)=>setUsername(e.target.value)} required/>
-            </div>
-            <div className="form-group mb-3">
-                <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
-                <input type="password" className="form-control" id="exampleInputPassword1" value={password} onChange={(e)=>setPassword(e.target.value)} required/>
-            </div>
-            <div className="form-group">
-                {isButtonLoading ? <Button type="primary" loading>Loading</Button>:<Button type="primary" onClick={signIn}>Login</Button>}
-            </div>
-            </form>
+            <div className="container mt-2">
+            {error && <div style={{ color:"red" }}>{error}</div>}
+            <Form
+            name="basic"
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+            >
+            <Form.Item
+                label="email"
+                name="username"
+                rules={[{ required: true, message: 'Please input your email!' }]}
+            >
+                <Input prefix={<UserOutlined className="site-form-item-icon" />}/>
+            </Form.Item>
+
+            <Form.Item
+                label="Password"
+                name="password"
+                rules={[{ required: true, message: 'Please input your password!' }]}
+            >
+                <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} />
+            </Form.Item>
+
+            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                {isButtonLoading ? <Button type="primary" loading disabled>Loading</Button>:<Button type="primary" htmlType="submit">Login</Button>}
+            </Form.Item>
+            </Form>
             </div>  
 
 
@@ -90,7 +111,9 @@ const Login = ()=>{
             <span>you dont have an account ? <Link to="/signup">register here</Link></span>
             </div>
             </div>
-        );
+
+            
+        </>);
     
 }
 export default Login;

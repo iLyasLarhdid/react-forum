@@ -11,6 +11,7 @@ const Logout = ()=>{
 
     if(cookies.ilyToken){
         removeCookie("ilyToken");
+        removeCookie("ilyRefreshToken");
         removeCookie("principal_id");
         removeCookie("principal_first_name");
         removeCookie("principal_last_name");

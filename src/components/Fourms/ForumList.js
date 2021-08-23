@@ -222,12 +222,12 @@ const ForumList = ({forumData}) =>{
                                 <div className="row g-2">
                                     <div>
                                         <div className="form-floating">
-                                        <input type="text" required minLength="5" className="form-control" id="title" placeholder="Title" onBlur={(e)=>setTitleUpdate(e.target.value)}/>
+                                        <input type="text" required minLength="5" className="form-control" id="title" placeholder="Title" value={titleUpdate} onChange={(e)=>setTitleUpdate(e.target.value)}/>
                                         <label htmlFor="title">Title</label>
                                         </div>
                                     </div>
                                     <div>
-                                        <textarea minLength="10" required className="form-control" id="content" placeholder="content" onBlur={(e)=>setContentUpdate(e.target.value)} rows="5"></textarea>
+                                        <textarea minLength="10" required className="form-control" id="content" placeholder="content" value={contentUpdate} onChange={(e)=>setContentUpdate(e.target.value)} rows="5"></textarea>
                                     </div>     
                                 </div>
                                 

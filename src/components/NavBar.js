@@ -18,9 +18,9 @@ const NavBar = () =>{
           <li className="nav-item">
             <Link className="nav-link active" aria-current="page" to="/">Home</Link>
           </li>
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <Link className="nav-link" to="/messenger">messages</Link>
-          </li>
+          </li> */}
           {!role ? <li className="nav-item"><Link className="nav-link" to="/signup">sign up</Link></li>:""}
           <li className="nav-item">
             {!role ? <Link className="nav-link" to="/login">login</Link> : <Link className="nav-link" to="/logout">logout</Link>}

@@ -1,18 +1,26 @@
 import Avatar from "antd/lib/avatar/avatar";
 import { Badge } from 'antd';
+import { Link } from "react-router-dom";
+
+const {host} = properties;
+const url = `${host}/api/v1/users/page/0`;
+const fetchData = async (key)=>{
+    const page = key.queryKey[1];
+    const res = await fetch(`${host}/api/v1/users/page/${page}`)
+    return res.json();
+}
 const ProfileSideBar = ()=>{
+
+    const {data,isLoading} = useQuery(['page',id],fetchData,{keepPreviousData:true})
 
     return(
     <>
     {/* show friends but for now i will show all users */}
-    <div><b>Ilyas Said 1</b> <Badge status="success"><Avatar>IS</Avatar></Badge></div>
-    <div><b>Said ilyas 2</b> <Badge><Avatar>SI</Avatar></Badge></div>
-    <div><b>Said ilyas 3</b> <Badge status="success"><Avatar>SI</Avatar></Badge></div>            
-    <div><b>Ilyas Said 4</b> <Badge><Avatar>IS</Avatar></Badge></div>
-    <div><b>Ilyas Said 1</b> <Badge status="success"><Avatar>IS</Avatar></Badge></div>
-    <div><b>Said ilyas 2</b> <Badge status="success"><Avatar>SI</Avatar></Badge></div>
-    <div><b>Said ilyas 3</b> <Badge><Avatar>SI</Avatar></Badge></div>
-    <div><b>Ilyas Said 4</b> <Badge><Avatar>IS</Avatar></Badge></div>
+    {
+        data.content.map((user)=>{
+            return (<div><b><Link to={`/profile/${user.id}`}>{user.firstName} {user.lastName}</Link></b> <Badge status="success"><Avatar>IS</Avatar></Badge></div>)
+        })
+    }
     </>
     );
 }

@@ -1,4 +1,4 @@
-import { Dropdown, List,message,Popconfirm, Space, Menu, Button } from "antd";
+import { Dropdown, List,message,Popconfirm, Space, Menu, Button,Form, Input } from "antd";
 import { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { Link, useHistory } from "react-router-dom";
@@ -21,16 +21,17 @@ function writeNumber(number){
     
     return number;
 }
+const layout = {
+    wrapperCol: {
+      span: 24,
+    },
+  };
+
 
 //todo tomorrow fix the bug where number of comments keeps getting rendered over and over and over again as you type
 const ForumList = ({forumData}) =>{
     const [forums,setForums] =  useState(forumData);
     const [role,] = useContext(UserContext);
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
-    const [forumId, setForumId] = useState("");
-    const [titleUpdate, setTitleUpdate] = useState("");
-    const [contentUpdate, setContentUpdate] = useState("");
     const [cookies,] = useCookies([]);
     const userId = cookies.principal_id;
     const {host} = properties;
@@ -44,21 +45,13 @@ const ForumList = ({forumData}) =>{
         history.push("/login");
         
 
-    useEffect(()=>{
-        setForums(forumData);
-    },[forumData]);
-
     // sleep time expects milliseconds
     function sleep (time) {
         return new Promise((resolve) => setTimeout(resolve, time));
     }
 
-    //filling the state variables for edit
-    const fillStateVariables = (title,content,forumId)=>{
-            setTitleUpdate(title);
-            setContentUpdate(content);
-            setForumId(forumId);
-    }
+    //filling the state variables for edit used to be here
+    
 
     const IconText = ({ icon, text }) => (
         <Space>
@@ -67,43 +60,8 @@ const ForumList = ({forumData}) =>{
         </Space>
       );
     
-    //update forum
-    const updateForum = (e)=>{
-        e.preventDefault();
-        document.querySelector("#updateForum").click();
-
-        if(titleUpdate.length < 5||contentUpdate.length < 10)
-            return;
-
-        message.loading('updating....',"updating");
-        const title = titleUpdate;
-        const content = contentUpdate;
-        const id = forumId;
-        const url = `${host}/api/v1/forums`;
-        fetch(url,{
-            method:"put",
-            headers: {
-                'Content-Type' : 'application/json',
-                'Authorization': cookies.ilyToken
-            },
-            body:JSON.stringify({id,title,content,userId})
-        })
-        .then(response => response.json()
-        .then(data=>{
-            //todo you should delete this setforums since it just renders again for no reason
-            setForums([...forums,data])
-            let updatedForums = forums.map((forum)=>{
-                if(forum.id !== data.id)
-                    return forum;
-                return  data;
-            });
-            setForums(updatedForums);
-            setTitle("");
-            setContent("");
-            message.success({content:'Updated successfully', key:"updating", duration:2});
-        }));
-
-    }
+    //update forum used tobe here
+    
     //delete forum 
     const deleteForum = (e)=>{
         //console.log(e.target.value);
@@ -120,12 +78,14 @@ const ForumList = ({forumData}) =>{
             return response});
     }
     //adding forum 
-    const addForum = (e)=>{
-        e.preventDefault();
-        
-        if(title.length < 5||content.length < 10)
+    const onFinish = (values) => {
+        console.log(values);
+        if(values.title.length < 5||values.content.length < 10)
             return;
+        message.loading('Adding new forum ...',"adding");
         const url = `${host}/api/v1/forums`;
+        const title = values.title;
+        const content = values.content;
         fetch(url,{
             method:"post",
             headers: {
@@ -142,13 +102,13 @@ const ForumList = ({forumData}) =>{
         .then(data=>{
             console.log(data);
             setForums([...forums,data]);
-            setTitle("");
-            setContent("");
-            message.success('Added successfully');
+            message.success({content:'Added successfully', key:"adding", duration:2});
         }).catch((err)=>{
+            message.error({content:'something went wrong! try again', key:"adding", duration:2});
             message.error(err);
         });
-    }
+      };
+
     return (
         <div className="forums-container">
             <h2>Forums</h2>
@@ -170,7 +130,6 @@ const ForumList = ({forumData}) =>{
                     <Menu.Item danger>
                       <Popconfirm title="Sure to cancel?" onConfirm={()=>deleteForum(item.id)}>delete</Popconfirm>
                     </Menu.Item>
-                    <Menu.Item><span data-bs-toggle="modal" data-bs-target="#updateForum" value={item.id} onClick={()=>fillStateVariables(item.title,item.content,item.id)}>edit</span></Menu.Item>
                   </Menu>}>
                  <Button type="link" onClick={e => e.preventDefault()} style={{ color:"black" }}>
                     Hover me <DownOutlined />
@@ -187,61 +146,32 @@ const ForumList = ({forumData}) =>{
         />
 
         {role==="ADMIN" ? <>
-            <button className="btn btn-outline-success mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#addForum" aria-expanded="false" aria-controls="addForum" onClick={()=>{sleep(250).then(()=>{window.scrollTo(0,document.body.scrollHeight)})}}>Add forum</button>
+            <button className="btn btn-outline-success mb-3 mt-3" type="button" data-bs-toggle="collapse" data-bs-target="#addForum" aria-expanded="false" aria-controls="addForum" onClick={()=>{sleep(250).then(()=>{window.scrollTo(0,document.body.scrollHeight)})}}>Add forum</button>
 
-            <form className="collapse multi-collapse" id="addForum" onSubmit={addForum}>
-            <div className="row g-2">
-                <div className="col-md-7">
-                    <div className="form-floating">
-                    <input type="text" required minLength="5" className="form-control" id="title" placeholder="Title" onBlur={(e)=>setTitle(e.target.value)}/>
-                    <label htmlFor="title">Title</label>
-                    </div>
-                </div>
-                <div className="col-md-7">
-                    <textarea minLength="10" required className="form-control" id="content" placeholder="content"  onBlur={(e)=>setContent(e.target.value)} rows="5" ></textarea>
-                </div>
-                <div>
-                    <button className="btn btn-success mb-5" type="submit">submit</button>
-                </div>            
-            </div>
-            </form>
+            <Form {...layout} name="forum" onFinish={onFinish} className="collapse multi-collapse" id="addForum">
+            <Form.Item
+                label="title"
+                name="title"
+                rules={[{ required: true, message: 'Please add title!' }]}
+            >
+                <Input/>
+            </Form.Item>
+            <Form.Item 
+                name='content' 
+                label="content"
+                rules={[{ required: true, message: 'Please add content!' }]}
+            >
+                <Input.TextArea rows="5" />
+            </Form.Item>
+            <Form.Item>
+                <Button type="primary" htmlType="submit">
+                    Submit
+                </Button>
+            </Form.Item>
+            </Form>
             </>:""}
 
-            {forumId && <>
-            {/* modal for uodating the forum                     */}
-            <form onSubmit={updateForum} name={forumId}>
-                        <div className="modal fade" id={"updateForum"} tabIndex="-1" aria-labelledby="updateForumLable" aria-hidden="true">
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="updateForumLable">Edit forum</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div className="modal-body">
-                                {/* form in my body */}
-                                <div className="row g-2">
-                                    <div>
-                                        <div className="form-floating">
-                                        <input type="text" required minLength="5" className="form-control" id="title" placeholder="Title" value={titleUpdate} onChange={(e)=>setTitleUpdate(e.target.value)}/>
-                                        <label htmlFor="title">Title</label>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <textarea minLength="10" required className="form-control" id="content" placeholder="content" value={contentUpdate} onChange={(e)=>setContentUpdate(e.target.value)} rows="5"></textarea>
-                                    </div>     
-                                </div>
-                                
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button className="btn btn-outline-success" type="submit" >Update</button>
-                            </div>
-                             
-                            </div>
-                        </div>
-                        </div>
-                        </form>
-            </>}
+
         </div>
     );
 }

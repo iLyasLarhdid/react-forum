@@ -176,7 +176,7 @@ const Posts = ({postsData,isFromProfile})=>{
             {posts.map((post)=>{
                     return (
                         <Comment
-                        key="parentComment"
+                        key={`parentComment${post.id}`}
                         actions={[
                             <Tooltip key="comment-basic-like" title="like">
                               <span onClick={()=>like(post.id)}>

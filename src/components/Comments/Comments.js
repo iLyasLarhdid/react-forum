@@ -147,6 +147,7 @@ const Comments =({commentsData})=>{
                 {comments.map((comment)=>{
                     return (
                         <Comment
+                        key={`comments${comment.id}`}
                         actions={[
                             <Tooltip key="comment-basic-like" title="Like">
                               <span onClick={()=>like(comment.id)}>

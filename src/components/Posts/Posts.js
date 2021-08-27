@@ -1,4 +1,4 @@
-import { Comment, Empty, Tooltip, message} from "antd";
+import { Comment, Empty, Tooltip, message,Button,Form,Input} from "antd";
 import { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { Link, useHistory, useParams } from "react-router-dom";
@@ -30,14 +30,12 @@ const Posts = ({postsData,isFromProfile})=>{
     const forumId=id;
     const [posts,setPosts] = useState(postsData.content);
     const [role,] = useContext(UserContext);
-    const [content, setContent] = useState("");
     const [cookies,] = useCookies([]);
     const userId = cookies.principal_id;
     const history = useHistory();
     let [doPostsExist,setDoPostsExist] = useState(false);
 
-    var Filter = require('bad-words'),
-    filter = new Filter();
+    //var Filter = require('bad-words'),filter = new Filter();
 
     if(!role)
         history.push("/login");
@@ -136,9 +134,14 @@ const Posts = ({postsData,isFromProfile})=>{
     //   ];
 
     //adding new post
-    const addPost = (e)=>{
-        e.preventDefault();
-        message.loading('Adding....',"updating");
+    const addPost = (values) => {
+        console.log(values);
+        if(values.content.length < 1){
+            message.error('your post is empty!!');
+            return;
+        }
+        message.loading('Adding new post ...',"adding");
+        const content = values.content;
         const url = `${host}/api/v1/posts`;
         fetch(url,{
             method:"post",
@@ -158,15 +161,15 @@ const Posts = ({postsData,isFromProfile})=>{
             console.log("post====>");
             console.log(data);
             //const index = JSON.stringify(data);
-            setPosts([...posts,data])
-            setContent("");
+            setPosts([...posts,data]);
         }).catch(err=>{
             message.error({content:'Updated successfully', key:"updating", duration:2});
             console.log("error while posting");
             console.log(err);
-            setContent("");
         });
-    }
+        sleep(200).then(()=>{window.scrollTo(0,document.body.scrollHeight)});
+      };
+
     return (
         <div className="forums-container">
             <h5>Posts : </h5>
@@ -211,7 +214,7 @@ const Posts = ({postsData,isFromProfile})=>{
                                 />
                             }
                         
-                        content={<p><Link to={`/posts/${post.id}`} style={{ color:'black' }}>{filter.clean(post.content)}</Link></p>}
+                        content={<p><Link to={`/posts/${post.id}`} style={{ color:'black' }}>{post.content}</Link></p>}
                     >
                         {/* you can post sub comments here */}
                     </Comment>
@@ -224,18 +227,19 @@ const Posts = ({postsData,isFromProfile})=>{
 }
             {role && !isFromProfile ? <>
 
-            <button className="btn btn-outline-success mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#addPost" aria-expanded="false" aria-controls="addPost" onClick={()=>{sleep(200).then(()=>{window.scrollTo(0,document.body.scrollHeight)})}}>Post a Question</button>
-
-            <form className="collapse multi-collapse" id="addPost" onSubmit={addPost}>
-            <div className="row g-2">
-                <div className="col-md-7">
-                    <textarea minLength="10" required className="form-control" id="content" placeholder="content" value={content} onChange={(e)=>setContent(e.target.value)} rows="5"></textarea>
-                </div>
-                <div>
-                    <button className="btn btn-success mb-5" type="submit">submit</button>
-                </div>            
-            </div>
-            </form>
+            <Form name="posts" onFinish={addPost}>
+            <Form.Item 
+                name="content"
+                label="post a question"
+            >
+                <Input.TextArea rows="5" value="hiiiii"/>
+            </Form.Item>
+            <Form.Item>
+                <Button type="primary" htmlType="submit">
+                    Submit
+                </Button>
+            </Form.Item>
+            </Form>
             </>:""}
             
         </div>

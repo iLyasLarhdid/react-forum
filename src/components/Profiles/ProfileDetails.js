@@ -128,13 +128,13 @@ const ProfileDetails = ({profile})=>{
             </Button>}</>}
             <div><b>{profileData.firstName} {profileData.lastName}</b></div>
             <div>{profileData.email}</div>
-            {posts && <div><Tooltip key="comment-basic-like" title="Total number of posts"><Statistic title="Total number of posts" value={posts.numberOfElements} prefix={<CommentOutlined />} /></Tooltip></div>}
+            {posts && <div><Tooltip key="comment-basic-like" title="Total number of posts"><Statistic title="Total number of posts" value={posts.totalElements} prefix={<CommentOutlined />} /></Tooltip></div>}
         </div>
         <div  className="col-lg-6 col-xl-5" style={{ background:"#FDFAF9", borderRadius:"10px", marginRight:"1rem", padding:"1rem",marginBottom:"1rem"}}>
             
             <div>{error && <div>{error}</div>}</div>
             <div>{isPending && <div><Skeleton active/><Skeleton active/><Skeleton active/></div>}</div>
-            <div>{posts && <Posts postsData={posts} isFromProfile={true}/>} {posts&& <>Pagination here {posts.numberOfElements}</>}</div>
+            <div>{posts && <Posts postsData={posts} isFromProfile={true}/>} {posts&& <>Pagination here {posts.totalElements}</>}</div>
         </div>
 
         <div className="col-lg-4 col-xl-3" style={{ background:"#edeff0", borderRadius:"10px", padding:"1rem",marginBottom:"1rem"}}>

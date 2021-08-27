@@ -7,6 +7,15 @@ import properties from "../properties";
 import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
+const layout = {
+    labelCol: {
+        span: 24,
+      },
+    wrapperCol: {
+      span: 24,
+    },
+  };
+
 const Login = ()=>{
     const {host} = properties;
     const url = `${host}/login`;
@@ -81,6 +90,7 @@ const Login = ()=>{
             wrapperCol={{ span: 16 }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
+            {...layout}
             >
             <Form.Item
                 label="email"
@@ -98,7 +108,7 @@ const Login = ()=>{
                 <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} />
             </Form.Item>
 
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Form.Item>
                 {isButtonLoading ? <Button type="primary" loading disabled>Loading</Button>:<Button type="primary" htmlType="submit">Login</Button>}
             </Form.Item>
             </Form>

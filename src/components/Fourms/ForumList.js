@@ -1,11 +1,13 @@
-import { Dropdown, List,message,Popconfirm, Space, Menu, Button,Form, Input } from "antd";
-import { useContext, useEffect, useState } from "react";
+import { List,message,Popconfirm, Space, Menu, Button,Form, Input, Drawer } from "antd";
+import { useContext, useEffect, useState, lazy } from "react";
 import { useCookies } from "react-cookie";
 import { Link, useHistory } from "react-router-dom";
 import { UserContext } from "../../hooks/UserContext";
 import properties from "../../properties";
-import { MessageOutlined, LikeOutlined, StarOutlined, EyeOutlined,DownOutlined } from '@ant-design/icons';
+import { MessageOutlined, LikeOutlined, StarOutlined, EyeOutlined,SettingOutlined } from '@ant-design/icons';
 import React from "react";
+import { Suspense } from "react";
+const Dropdown = lazy(()=>import ('antd').then(mod=>({default:mod.Dropdown})));
 
 function writeNumber(number){
     if(number === null)
@@ -22,6 +24,9 @@ function writeNumber(number){
     return number;
 }
 const layout = {
+    labelCol: {
+        span: 24,
+      },
     wrapperCol: {
       span: 24,
     },
@@ -35,8 +40,25 @@ const ForumList = ({forumData}) =>{
     const [cookies,] = useCookies([]);
     const userId = cookies.principal_id;
     const {host} = properties;
-    var Filter = require('bad-words'),
-    filter = new Filter();
+    const [visible, setVisible] = useState(false);
+    const [form] = Form.useForm();
+    const [formUpdate] = Form.useForm();
+
+    const showDrawer = (forumId,title,content) => {
+        formUpdate.setFieldsValue({
+            forumId:forumId,
+            titleUpdate:title,
+            contentUpdate:content
+        })
+        setVisible(true);
+    };
+
+    const onClose = () => {
+        form.resetFields();
+        setVisible(false);
+    };
+    //todo : you should look for a way to lazy load this so it doesnt make your page slow
+    //var Filter = require('bad-words'),filter = new Filter();
     //console.log(filter.clean("Don't be an ash0le"));
     
     const history = useHistory();
@@ -48,9 +70,9 @@ const ForumList = ({forumData}) =>{
         setForums(forumData);
     },[forumData]);
     // sleep time expects milliseconds
-    function sleep (time) {
-        return new Promise((resolve) => setTimeout(resolve, time));
-    }
+    // function sleep (time) {
+    //     return new Promise((resolve) => setTimeout(resolve, time));
+    // }
 
     //filling the state variables for edit used to be here
     
@@ -63,6 +85,46 @@ const ForumList = ({forumData}) =>{
       );
     
     //update forum used tobe here
+    //update forum
+    const updateForum = (values)=>{
+
+        console.log(values);
+        if(values.titleUpdate.length < 5||values.contentUpdate.length < 10)
+            return;
+        message.loading('Adding new forum ...',"adding");
+        const url = `${host}/api/v1/forums`;
+        const title = values.titleUpdate;
+        const content = values.contentUpdate;
+        const id = values.forumId;
+        fetch(url,{
+            method:"put",
+            headers: {
+                'Content-Type' : 'application/json',
+                'Authorization': cookies.ilyToken
+            },
+            body:JSON.stringify({id,title,content,userId})
+        })
+        .then(response => {
+            if(!response.ok){
+                throw Error("somethign went wrong");
+            }
+            return response.json()})
+        .then(data=>{
+            console.log(data);
+            let updatedForums = forums.map((forum)=>{
+                if(forum.id !== data.id)
+                    return forum;
+                return  data;
+            });
+            setForums(updatedForums);
+            message.success({content:'Added successfully', key:"adding", duration:2});
+            formUpdate.resetFields();
+        }).catch((err)=>{
+            message.error({content:'something went wrong! try again', key:"adding", duration:2});
+            message.error(err);
+        });
+
+    }
     
     //delete forum 
     const deleteForum = (e)=>{
@@ -80,10 +142,17 @@ const ForumList = ({forumData}) =>{
             return response});
     }
     //adding forum 
-    const onFinish = (values) => {
+    const addForum = (values) => {
         console.log(values);
-        if(values.title.length < 5||values.content.length < 10)
+        if(values.title.length < 5){
+            message.warning("title needs to be more than 4 characters")
             return;
+        }
+        if(values.content.length < 10){
+            message.warning("content needs to be more than 9 characters")
+            return;
+        }
+            
         message.loading('Adding new forum ...',"adding");
         const url = `${host}/api/v1/forums`;
         const title = values.title;
@@ -105,6 +174,7 @@ const ForumList = ({forumData}) =>{
             console.log(data);
             setForums([...forums,data]);
             message.success({content:'Added successfully', key:"adding", duration:2});
+            form.resetFields();
         }).catch((err)=>{
             message.error({content:'something went wrong! try again', key:"adding", duration:2});
             message.error(err);
@@ -114,10 +184,9 @@ const ForumList = ({forumData}) =>{
     return (
         <div className="forums-container">
             <h2>Forums</h2>
-
             <List
             itemLayout="vertical"
-            style={{ background:"#f8f9fa",padding:"2rem",borderRadius:"10px" }}
+            style={{ background:"#fafafa",marginBottom:"10px",padding:"2rem",borderRadius:"10px" }}
             dataSource={forums}
             renderItem={item => (
             <List.Item 
@@ -128,29 +197,40 @@ const ForumList = ({forumData}) =>{
                 <IconText icon={MessageOutlined} text={writeNumber(item.numberOfPosts)} key="list-vertical-message" />,
                 <IconText icon={EyeOutlined} text={writeNumber(item.views)} key="list-vertical-message" />,
                 role==="ADMIN" ?
-                 <Dropdown overlay={<Menu>
-                    <Menu.Item danger>
-                      <Popconfirm title="Sure to cancel?" onConfirm={()=>deleteForum(item.id)}>delete</Popconfirm>
-                    </Menu.Item>
-                  </Menu>}>
-                 <Button type="link" onClick={e => e.preventDefault()} style={{ color:"black" }}>
-                    Hover me <DownOutlined />
-                </Button>
-               </Dropdown>:"",
+                 <Suspense fallback={<div>loading...</div>}>
+                     <Dropdown overlay={
+                        <Menu>
+                        <Menu.Item danger>
+                        <Popconfirm title="Sure to cancel?" onConfirm={()=>deleteForum(item.id)}>
+                            <Button type="primary" danger>
+                            Delete
+                            </Button>
+                        </Popconfirm>
+                        </Menu.Item>
+                        <Menu.Item success>
+                        <Button type="primary" onClick={()=>showDrawer(item.id,item.title,item.content)}>
+                            Edit
+                        </Button>
+                        </Menu.Item>
+                        </Menu>}>
+
+                        <Button type="link" onClick={e => e.preventDefault()} style={{ color:"black" }}>
+                        <SettingOutlined />
+                        </Button>
+                    </Dropdown>
+                 </Suspense>:"",
               ]}
             >
                 <List.Item.Meta
-                title={<Link to={`/forums/${item.id}`}>{filter.clean(item.title)}</Link>}
-                description={<Link to={`/forums/${item.id}`} style={{ color:"black" }}>{filter.clean(item.content)}</Link>}
+                title={<Link to={`/forums/${item.id}`}>{item.title}</Link>}
+                description={<Link to={`/forums/${item.id}`} style={{ color:"black" }}>{item.content}</Link>}
                 />
             </List.Item>
             )}
         />
 
         {role==="ADMIN" ? <>
-            <button className="btn btn-outline-success mb-3 mt-3" type="button" data-bs-toggle="collapse" data-bs-target="#addForum" aria-expanded="false" aria-controls="addForum" onClick={()=>{sleep(250).then(()=>{window.scrollTo(0,document.body.scrollHeight)})}}>Add forum</button>
-
-            <Form {...layout} name="forum" onFinish={onFinish} className="collapse multi-collapse" id="addForum">
+            <Form {...layout} name="forum" form={form} onFinish={addForum}>
             <Form.Item
                 label="title"
                 name="title"
@@ -173,8 +253,57 @@ const ForumList = ({forumData}) =>{
             </Form>
             </>:""}
 
+            <Drawer
+            title="Basic Drawer"
+            placement="right"
+            closable={false}
+            width={"100%"}
+            onClose={onClose}
+            visible={visible}
+            footer={
+            <div
+              style={{
+                textAlign: 'right',
+              }}
+            >
+              <Button onClick={onClose} style={{ marginRight: 8 }}>
+                Cancel
+              </Button>
+            </div>
+          }
+            >
+                <Form {...layout} name="forum" form={formUpdate} onFinish={updateForum}>
+                    <Form.Item
+                        hidden="true"
+                        label="title"
+                        name="forumId"
+                    >
+                        <Input/>
+                    </Form.Item>
+                    <Form.Item
+                        label="title"
+                        name="titleUpdate"
+                        rules={[{ required: true, message: 'Please add title!' }]}
+                    >
+                        <Input/>
+                    </Form.Item>
+                    <Form.Item 
+                        name='contentUpdate' 
+                        label="content"
+                        rules={[{ required: true, message: 'Please add content!' }]}
+                    >
+                        <Input.TextArea rows="5" />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" onClick={onClose}>
+                            Submit
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Drawer>
+
 
         </div>
     );
 }
-export default ForumList;
+export default React.memo(ForumList);

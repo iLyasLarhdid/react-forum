@@ -25,8 +25,7 @@ const ProfileSideBar = ()=>{
     if(cookies.ilyToken != null)
         token = cookies.ilyToken;
 
-    const {data,isLoading} = useQuery(['page',0,token],fetchData,{keepPreviousData:true})
-    console.log("my dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    const {data,isLoading} = useQuery(['page',0,token],fetchData,{keepPreviousData:true});
     console.log(data);
     return(
     <>
@@ -34,7 +33,7 @@ const ProfileSideBar = ()=>{
     {isLoading && <div>loadning....</div>}
     {data && 
         data.content.map((user)=>{
-            return (<div><b><Link to={`/profile/${user.id}`}>{user.firstName} {user.lastName}</Link></b> <Badge status="success"><Avatar>IS</Avatar></Badge></div>)
+            return (<div><Badge status="success"><Avatar>{user.firstName}</Avatar></Badge> <b><Link to={`/profile/${user.id}`}>{user.firstName} {user.lastName}</Link></b> </div>)
         })
     }
     </>

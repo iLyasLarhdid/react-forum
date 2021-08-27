@@ -1,10 +1,13 @@
 import { useParams } from "react-router";
-import Posts from "./Posts";
+//import Posts from "./Posts";
 import useFetch from "../../hooks/useFetch";
 import properties from "../../properties";
 import { useQuery } from "react-query";
 import { List, Skeleton } from "antd";
+import { lazy } from "react";
+import { Suspense } from "react";
 const {host} = properties;
+const Posts = lazy(()=>import ('./Posts'));
 
 const fetchData = async (key)=>{
     const forumId = key.queryKey[1];
@@ -21,8 +24,7 @@ const ForumDetails = () =>{
     const [posts,isPending,error] = useFetch(url);
     
     console.log(posts);
-    var Filter = require('bad-words'),
-    filter = new Filter();
+    //var Filter = require('bad-words'),filter = new Filter();
    
     return (
     <div className="container">
@@ -31,13 +33,16 @@ const ForumDetails = () =>{
             <div>
                 <h5>forum : </h5>
                 <List.Item >
-                <List.Item.Meta title={filter.clean(data.title)} description={filter.clean(data.content)} />
+                <List.Item.Meta title={data.title} description={data.content} />
                 </List.Item>
             </div>}
 
         <div>{error && <div>{error}</div>}</div>
         <div>{isPending && <div><Skeleton active/><Skeleton active/><Skeleton active/></div>}</div>
-        <div>{posts && <Posts postsData={posts} isFromProfile={false}/>}</div>
+        <div>{posts && 
+            <Suspense fallback={<Skeleton/>}>
+                <Posts postsData={posts} isFromProfile={false}/>
+            </Suspense>}</div>
     </div>)
 }
 export default ForumDetails;

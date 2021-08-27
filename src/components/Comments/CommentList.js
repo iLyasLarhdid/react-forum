@@ -50,8 +50,7 @@ const CommentList = ()=>{
     if(cookies.ilyToken != null)
         token = cookies.ilyToken;
     
-    var Filter = require('bad-words'),
-    filter = new Filter();
+    //var Filter = require('bad-words'), filter = new Filter();
     
     const {data,isLoading} = useQuery(['forumId',id,token,triggerQueryChange],fetchData,{keepPreviousData:false})
     console.log("data");
@@ -103,7 +102,7 @@ const CommentList = ()=>{
         {data && 
             <div>
                 <List.Item id={"row"+data.forum.id} >
-                <List.Item.Meta title="Forum" description={filter.clean(data.forum.title)} />
+                <List.Item.Meta title="Forum" description={data.forum.title} />
                 </List.Item>
 
                 <Comment
@@ -141,7 +140,7 @@ const CommentList = ()=>{
                                 />
                             }
                         
-                        content={<p>{filter.clean(data.content)}</p>}
+                        content={<p>{data.content}</p>}
                     >
                      {comments && <Comments commentsData={comments.content}/>}   
                     </Comment>

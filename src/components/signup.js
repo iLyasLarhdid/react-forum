@@ -5,6 +5,16 @@ import { UserContext } from "../hooks/UserContext";
 import properties from "../properties";
 import { Form, Input, Button,message } from 'antd';
 import { UserOutlined, LockOutlined,MailOutlined } from '@ant-design/icons';
+
+const layout = {
+    labelCol: {
+        span: 24,
+      },
+    wrapperCol: {
+      span: 24,
+    },
+  };
+
 const Signup = ()=>{
 
     const [role,] = useContext(UserContext);
@@ -76,6 +86,7 @@ const Signup = ()=>{
             wrapperCol={{ span: 18 }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
+            {...layout}
             >
             <Form.Item
                 label="first name"
@@ -121,7 +132,7 @@ const Signup = ()=>{
                 <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} />
             </Form.Item>
 
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Form.Item>
                 {isButtonLoading ? <Button type="primary" loading disabled>Loading</Button>:<Button type="primary" htmlType="submit">sign up</Button>}
             </Form.Item>
             </Form>

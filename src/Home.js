@@ -11,7 +11,8 @@ const Pagination = lazy(()=>import ('antd').then(mod=>({default:mod.Pagination})
 
 const fetchData = async (key)=>{
     const page = key.queryKey[1];
-    const res = await fetch(`${host}/api/v1/forums/page/${page}`)
+    const res = await fetch(`${host}/api/v1/forums/page/${page}`);
+    //for infinite scrolling instead of returning just the data that we have got from the back end we should return the oldData+newdata so that we dont lose old data
     return res.json();
 }
 

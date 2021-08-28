@@ -52,7 +52,7 @@ const CommentList = ()=>{
     
     //var Filter = require('bad-words'), filter = new Filter();
     
-    const {data,isLoading} = useQuery(['forumId',id,token,triggerQueryChange],fetchData,{keepPreviousData:false})
+    const {data,isLoading} = useQuery(['forumId',id,token,triggerQueryChange],fetchData,{keepPreviousData:true})
     console.log("data");
     console.log(data);
     const url = `${host}/api/v1/comments/post/id/${id}`;
@@ -99,7 +99,7 @@ const CommentList = ()=>{
         <div className="container">
         <div>{isLoading && <><Skeleton active/><Skeleton active/></>}</div>
 
-        {data && 
+        {data && typeof(data) != "undefined" && 
             <div>
                 <List.Item id={"row"+data.forum.id} >
                 <List.Item.Meta title="Forum" description={data.forum.title} />

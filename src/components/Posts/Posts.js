@@ -22,7 +22,16 @@ function writeNumber(number){
         return number/1000+"K";  
     
     return number;
-}
+};
+
+const layout = {
+    labelCol: {
+        span: 24,
+      },
+    wrapperCol: {
+      span: 24,
+    },
+};
 
 
 const Posts = ({postsData,isFromProfile})=>{
@@ -34,6 +43,7 @@ const Posts = ({postsData,isFromProfile})=>{
     const userId = cookies.principal_id;
     const history = useHistory();
     let [doPostsExist,setDoPostsExist] = useState(false);
+    const [form] = Form.useForm();
 
     //var Filter = require('bad-words'),filter = new Filter();
 
@@ -160,6 +170,7 @@ const Posts = ({postsData,isFromProfile})=>{
             message.success({content:'Updated successfully', key:"updating", duration:2});
             console.log("post====>");
             console.log(data);
+            form.resetFields();
             //const index = JSON.stringify(data);
             setPosts([...posts,data]);
         }).catch(err=>{
@@ -173,6 +184,22 @@ const Posts = ({postsData,isFromProfile})=>{
     return (
         <div className="forums-container">
             <h5>Posts : </h5>
+            {role && !isFromProfile ? <>
+            <Form name="posts" onFinish={addPost} form={form} {...layout}>
+            <Form.Item 
+                name="content"
+                label="post a question"
+            >
+                <Input.TextArea rows="5" value="hiiiii"/>
+            </Form.Item>
+            <Form.Item>
+                <Button type="primary" htmlType="submit">
+                    Submit
+                </Button>
+            </Form.Item>
+            </Form>
+            </>:""}
+
             {!doPostsExist && <Empty description="no Posts"/>}
             {doPostsExist && 
             <>
@@ -225,22 +252,6 @@ const Posts = ({postsData,isFromProfile})=>{
                 
             </>
 }
-            {role && !isFromProfile ? <>
-
-            <Form name="posts" onFinish={addPost}>
-            <Form.Item 
-                name="content"
-                label="post a question"
-            >
-                <Input.TextArea rows="5" value="hiiiii"/>
-            </Form.Item>
-            <Form.Item>
-                <Button type="primary" htmlType="submit">
-                    Submit
-                </Button>
-            </Form.Item>
-            </Form>
-            </>:""}
             
         </div>
     )

@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import properties from "../../properties";
 import Avatar from "antd/lib/avatar/avatar";
 import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled  } from '@ant-design/icons';
-import { Comment, Empty, message, Tooltip } from "antd";
+import { Comment, Empty, message, Tooltip, Button,Form,Input } from "antd";
 import React from "react";
 
 function writeNumber(number){
@@ -31,11 +31,11 @@ const Comments =({commentsData})=>{
 
     const [comments, setComments] = useState(commentsData);
     const [role,] = useContext(UserContext);
-    const [comment, setComment] = useState("");
     const [cookies,] = useCookies([]);
     const userId = cookies.principal_id;
     const history = useHistory();
     const {host,avatarProp} = properties;
+    const [form] = Form.useForm();
 
     //var Filter = require('bad-words'), filter = new Filter();
 
@@ -110,10 +110,15 @@ const Comments =({commentsData})=>{
     //   ];
 
     //adding new comment
-    const addComment = (e)=>{
-        e.preventDefault();
+    const addComment = (values) => {
+        console.log(values);
         const url = `${host}/api/v1/comments`;
-        message.loading('updating....',"updating");
+        if(values.comment.length < 1){
+            message.error('your comment is empty!!');
+            return;
+        }
+        message.loading('commenting...',"updating");
+        const comment = values.comment;
         fetch(url,{
             method:"post",
             headers: {
@@ -124,22 +129,60 @@ const Comments =({commentsData})=>{
         })
         .then(response => {
             if(!response.ok){
-                throw Error("couldn't get data");
+                throw Error("something went wrong");
             }
-            return response.json()
-        }).then(data=>{
+            return response.json()}
+            ).then(data=>{
+            message.success({content:'Added successfully', key:"updating", duration:2});
+            console.log("comment====>");
+            console.log(data);
+            form.resetFields();
             //const index = JSON.stringify(data);
             setComments([...comments,data]);
-            setComment("");
-            message.success({content:'Updated successfully', key:"updating", duration:2});
-        }).catch(()=>{
-            message.error({content:"could not add comment, try again", key:"updating", duration:2});
+        }).catch(err=>{
+            message.error({content:'Something went wrong! try again', key:"updating", duration:2});
         });
-    }
+        sleep(200).then(()=>{window.scrollTo(0,document.body.scrollHeight)});
+      };
 
     return (
         <div className="forums-container">
         <h5>Comments : </h5>
+        {/* form for leaving messages */}
+        {role ? <>
+            <Comment
+                key={`addcomment`}
+                avatar=
+                    {cookies.principal_avatar ? 
+                        <img src={cookies.principal_avatar} width="50" alt="avatar"/>
+                            :
+                        <Avatar
+                            src={avatarProp}
+                            alt="avatar"
+                        />
+                    }
+                content={<>
+            <Form name="posts" onFinish={addComment} form={form} >
+            <Form.Item 
+                name="comment"
+                rules={[{ required: true, message: 'Please add comment!' }]}
+            >
+                <Input.TextArea rows="5" value="hiiiii"/>
+            </Form.Item>
+            <Form.Item>
+                <Button type="primary" htmlType="submit">
+                    Submit
+                </Button>
+            </Form.Item>
+            </Form>
+
+                </>}
+                    >
+                        {/* you can post sub comments here */}
+                    </Comment>
+
+            
+            </>:""}
         <div>{!doCommentsExist && <Empty description="no comments"/>}</div>
             <>{doCommentsExist && 
                 <>
@@ -184,23 +227,6 @@ const Comments =({commentsData})=>{
                 </>
             }</>
 
-        
-        {/* form for leaving messages */}
-        {role ? <>
-
-            <button className="btn btn-outline-success mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#addComment" aria-expanded="false" aria-controls="addComment" onClick={()=>{sleep(300).then(()=>{window.scrollTo(0,document.body.scrollHeight)})}}>Comment</button>
-
-            <form className="collapse multi-collapse" id="addComment" onSubmit={addComment}>
-            <div className="row g-2">
-                <div className="col-md-7">
-                    <textarea minLength="10" required className="form-control" id="comment" placeholder="content" value={comment} onChange={(e)=>setComment(e.target.value)} rows="5"></textarea>
-                </div>
-                <div>
-                    <button className="btn btn-success mb-5" type="submit">submit</button>
-                </div>            
-            </div>
-            </form>
-            </>:""}
     </div>
     );
 }

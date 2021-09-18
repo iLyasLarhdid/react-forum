@@ -1,6 +1,6 @@
 import properties from "../../properties";
 import React, { useState } from 'react';
-import { Upload,Button,Tooltip,message,Image, Skeleton, Statistic } from 'antd';
+import { Upload,Button,Tooltip,message,Image, Skeleton, Statistic, Affix } from 'antd';
 import ImgCrop from 'antd-img-crop';
 import { useCookies } from "react-cookie";
 import useFetch from "../../hooks/useFetch";
@@ -89,11 +89,9 @@ const ProfileDetails = ({profile})=>{
         
         <div className="col-lg-4 col-xl-3" style={{ background:"#edeff0", borderRadius:"10px", marginRight:"1rem", padding:"1rem",marginBottom:"1rem"}}>
 
-        {profileData.id === cookies.principal_id && <Tooltip key="comment-basic-like" title="click to change avatar"><Button type="link" onClick={()=>setShowUploadField(!showUploadField)}>upload picture </Button></Tooltip>}
-
             {profileData.avatar ? 
                     <Image
-                    width={250}
+                    width={200}
                     src={`${host}/upload/viewFile/${profileData.avatar}`}
                     alt="avatar"
                     />
@@ -126,21 +124,31 @@ const ProfileDetails = ({profile})=>{
                     >
                     Start Upload
             </Button>}</>}
+            <div>
+            {profileData.id === cookies.principal_id && <Tooltip key="comment-basic-like" title="click to change avatar"><Button type="link" onClick={()=>setShowUploadField(!showUploadField)}>upload picture </Button></Tooltip>}
+            </div>
+
             <div><b>{profileData.firstName} {profileData.lastName}</b></div>
             <div>{profileData.email}</div>
-            {posts && <div><Tooltip key="comment-basic-like" title="Total number of posts"><Statistic title="Total number of posts" value={posts.totalElements} prefix={<CommentOutlined />} /></Tooltip></div>}
+            {posts && <div><Statistic title="Total number of posts" value={posts.totalElements} prefix={<CommentOutlined />} /></div>}
         </div>
-        <div  className="col-lg-6 col-xl-5" style={{ background:"#FDFAF9", borderRadius:"10px", marginRight:"1rem", padding:"1rem",marginBottom:"1rem"}}>
-            
+        
+        <div  className="col-lg-6 col-xl-5" style={{ background:"#FDFAF9", borderRadius:"10px", marginRight:"1rem", padding:"1rem",overflowY:"scroll",height:"100vh",marginBottom:"1rem"}}>
             <div>{error && <div>{error}</div>}</div>
             <div>{isPending && <div><Skeleton active/><Skeleton active/><Skeleton active/></div>}</div>
             <div>{posts && <Posts postsData={posts} isFromProfile={true}/>} {posts&& <>Pagination here {posts.totalElements}</>}</div>
+            
         </div>
+        
 
         <div className="col-lg-4 col-xl-3" style={{ background:"#edeff0", borderRadius:"10px", padding:"1rem",marginBottom:"1rem"}}>
-            <h5>Friends : </h5>
-            <p>this is just a demo data, before implementing friendships system in the backend and</p>
-            <ProfileSideBar/>
+            
+                <div style={{ overflowY:"scroll",height:"95vh" }}>
+                    <h5>Friends : </h5>
+                    <p>this is just a demo data, before implementing friendships system in the backend and</p>
+                    <ProfileSideBar/>
+                </div>
+            
         </div>
         
     </div>

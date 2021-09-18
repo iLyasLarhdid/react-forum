@@ -257,7 +257,7 @@ const ForumList = ({forumData}) =>{
             title="Basic Drawer"
             placement="right"
             closable={false}
-            width={"100%"}
+            width={"90%"}
             onClose={onClose}
             visible={visible}
             footer={

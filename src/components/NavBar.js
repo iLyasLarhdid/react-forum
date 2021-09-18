@@ -2,11 +2,13 @@ import { useContext } from "react";
 import { useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
 import { UserContext } from "../hooks/UserContext";
+import { Affix } from 'antd';
 
 const NavBar = () =>{
     const [cookies,] = useCookies();
     const [role,] = useContext(UserContext);
     return (<>
+    <Affix>
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
     <div className="container-fluid">
       <Link className="navbar-brand" to="/">Navbar</Link>
@@ -18,9 +20,9 @@ const NavBar = () =>{
           <li className="nav-item">
             <Link className="nav-link active" aria-current="page" to="/">Home</Link>
           </li>
-          {/* <li className="nav-item">
-            <Link className="nav-link" to="/messenger">messages</Link>
-          </li> */}
+          {role ? <li className="nav-item">
+            <Link className="nav-link" aria-current="page" to="/messenger">messages</Link>
+          </li> :""}
           {!role ? <li className="nav-item"><Link className="nav-link" to="/signup">sign up</Link></li>:""}
           <li className="nav-item">
             {!role ? <Link className="nav-link" to="/login">login</Link> : <Link className="nav-link" to="/logout">logout</Link>}
@@ -40,6 +42,6 @@ const NavBar = () =>{
         </ul>
       </div>
     </div>
-  </nav></>)
+  </nav></Affix></>)
 }
 export default NavBar;

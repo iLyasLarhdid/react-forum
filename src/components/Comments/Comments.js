@@ -24,7 +24,7 @@ function writeNumber(number){
     return number;
 }
 
-const Comments =({commentsData})=>{
+const Comments =({commentsData,showForm})=>{
     const {id} = useParams();
     const postId=id;
     let [doCommentsExist,setDoCommentsExist] = useState(false);
@@ -40,10 +40,10 @@ const Comments =({commentsData})=>{
     //var Filter = require('bad-words'), filter = new Filter();
 
     useEffect(()=>{
-        if(comments.length === 0)
-            setDoCommentsExist(false);
-        else
+        if(comments!==undefined && comments && comments.length > 0)
             setDoCommentsExist(true);
+        else
+            setDoCommentsExist(false);
     },[comments,commentsData]);
 
     if(!role)
@@ -142,14 +142,14 @@ const Comments =({commentsData})=>{
         }).catch(err=>{
             message.error({content:'Something went wrong! try again', key:"updating", duration:2});
         });
-        sleep(200).then(()=>{window.scrollTo(0,document.body.scrollHeight)});
+        //sleep(200).then(()=>{window.scrollTo(0,document.body.scrollHeight)});
       };
 
     return (
         <div className="forums-container">
         <h5>Comments : </h5>
         {/* form for leaving messages */}
-        {role ? <>
+        {role && showForm ? <>
             <Comment
                 key={`addcomment`}
                 avatar=

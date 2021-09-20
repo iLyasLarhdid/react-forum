@@ -2,7 +2,7 @@ import { useParams } from "react-router";
 import Comments from "./Comments";
 import useFetch from "../../hooks/useFetch";
 import properties from "../../properties";
-import { useQuery } from "react-query";
+import { useInfiniteQuery, useQuery } from "react-query";
 import { useCookies } from "react-cookie";
 import { List, Skeleton, Comment, Tooltip } from "antd";
 import Avatar from "antd/lib/avatar/avatar";
@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled,CommentOutlined} from '@ant-design/icons';
 import { useEffect, useState } from "react";
 import Posts from "../Posts/Posts";
+import InfiniteScroll from "react-infinite-scroller";
 
 const {host,avatarProp} = properties;
 
@@ -32,7 +33,13 @@ const fetchData = async (key)=>{
     
     const postId = key.queryKey[1];
     const token = key.queryKey[2];
-    const res = await fetch(`${host}/api/v1/comments/post/id/${postId}`,{
+    let page;
+    if(typeof key.pageParam === "undefined")
+        page=0;
+    else
+        page = key.pageParam;
+    console.log(key);
+    const res = await fetch(`${host}/api/v1/comments/post/id/${postId}/page/${page}`,{
         headers: {
             'Content-Type' : 'application/json',
             'Authorization': token
@@ -54,7 +61,25 @@ const CommentList = ()=>{
     
     //var Filter = require('bad-words'), filter = new Filter();
     
-    const {data,isLoading} = useQuery(['forumId',id,token],fetchData,{keepPreviousData:true})
+    // const {data,isLoading} = useQuery(['comments',id,token],fetchData,{keepPreviousData:true})
+    const {
+        data,
+        isLoading,
+        fetchNextPage,
+        hasNextPage,
+        isFetching,
+        isFetchingNextPage,
+        status,
+      } = useInfiniteQuery(['comments',id,token], fetchData, {
+        getNextPageParam: (lastPage, pages) => {
+            console.log(pages);
+            console.log("next page number : ",lastPage);        
+            let nextPage = undefined;
+            if(lastPage.number<lastPage.totalPages-1)
+                nextPage = lastPage.number+1;
+            return (nextPage)
+        },
+      })
     console.log("data");
     console.log(data);
     const url = `${host}/api/v1/posts/id/${id}`;
@@ -150,7 +175,22 @@ const CommentList = ()=>{
                         
                         content={<p>{posts.content}</p>}
                     >
-                     {data && <Comments commentsData={data.content}/>}   
+                    {data &&
+                    <InfiniteScroll
+                        pageStart={0}
+                        loadMore={fetchNextPage}
+                        hasMore={hasNextPage}
+                        loader={<div className="loader" key={1}><Skeleton/></div>}
+                    >
+                     <>{data.pages.length && data.pages.map((comment,index)=>{
+                        return(
+                            <>{index === 0 ? 
+                            <Comments commentsData={comment.content} showForm={true}/> : <Comments commentsData={comment.content} showForm={false}/>
+                        }</>
+                            )})
+                    }</>
+                    </InfiniteScroll>
+                    }
                     </Comment>
             </div>}
 

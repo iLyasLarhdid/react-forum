@@ -14,7 +14,7 @@ const Posts = lazy(()=>import ('./Posts'));
 const fetchData = async (key)=>{
     const forumId = key.queryKey[1];
     const token = key.queryKey[2];
-    let page = key.queryKey[3];
+    let page;
     if(typeof key.pageParam === "undefined")
         page=0;
     else
@@ -32,7 +32,6 @@ const fetchData = async (key)=>{
 const ForumDetails = () =>{
     const {id} = useParams();
     const [cookies,] = useCookies();
-    const [pageNumber, setPageNumber] =useState(0);
     const [hasMore,setHasMore] = useState(true);
     //use !data.last as the has more
 
@@ -53,7 +52,7 @@ const ForumDetails = () =>{
         isFetching,
         isFetchingNextPage,
         status,
-      } = useInfiniteQuery(['posts',id,token,pageNumber], fetchData, {
+      } = useInfiniteQuery(['posts',id,token], fetchData, {
         getNextPageParam: (lastPage, pages) => {
             console.log(pages);
             console.log("next page number : ",lastPage);        
@@ -85,15 +84,15 @@ const ForumDetails = () =>{
         <div>{isPending && <div><Skeleton active/><Skeleton active/><Skeleton active/></div>}</div>
         <div>{data &&
         <InfiniteScroll
-            pageStart={pageNumber}
+            pageStart={0}
             loadMore={fetchNextPage}
             hasMore={hasNextPage}
             loader={<div className="loader" key={1}><Skeleton/></div>}
         >
-            {data.pages.length && data.pages.map(post=>{
+            {data.pages.length && data.pages.map((post,index)=>{
                 return(
                     <Suspense fallback={<Skeleton/>}>
-                        <Posts postsData={post} isFromProfile={false}/>
+                        {index===0 ? <Posts postsData={post} showForm={true}/>:<Posts postsData={post} showForm={false}/>}
                     </Suspense>
                 )
             })}

@@ -34,7 +34,7 @@ const layout = {
 };
 
 
-const Posts = ({postsData,isFromProfile})=>{
+const Posts = ({postsData,showForm})=>{
     const {id} = useParams();
     const forumId=id;
     const [posts,setPosts] = useState(postsData.content);
@@ -184,7 +184,7 @@ const Posts = ({postsData,isFromProfile})=>{
     return (
         <div className="forums-container">
             <h5>Posts : </h5>
-            {role && !isFromProfile ? <>
+            {role && showForm ? <>
             <Form name="posts" onFinish={addPost} form={form} {...layout}>
             <Form.Item 
                 name="content"

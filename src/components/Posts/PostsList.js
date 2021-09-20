@@ -2,18 +2,25 @@ import { useParams } from "react-router";
 //import Posts from "./Posts";
 import useFetch from "../../hooks/useFetch";
 import properties from "../../properties";
-import { useQuery } from "react-query";
+import { useInfiniteQuery, useQuery } from "react-query";
 import { List, Skeleton } from "antd";
 import { lazy } from "react";
-import { Suspense } from "react";
+import { Suspense,useState } from "react";
 import { useCookies } from "react-cookie";
+import InfiniteScroll from 'react-infinite-scroller';
 const {host} = properties;
 const Posts = lazy(()=>import ('./Posts'));
 
-const fetchDataAgain = async (key)=>{
+const fetchData = async (key)=>{
     const forumId = key.queryKey[1];
     const token = key.queryKey[2];
-    const res = await fetch(`${host}/api/v1/posts/forum/id/${forumId}`,{
+    let page = key.queryKey[3];
+    if(typeof key.pageParam === "undefined")
+        page=0;
+    else
+        page = key.pageParam;
+    console.log(key);
+    const res = await fetch(`${host}/api/v1/posts/forum/id/${forumId}/page/${page}`,{
         headers: {
             'Content-Type' : 'application/json',
             'Authorization': token
@@ -25,6 +32,9 @@ const fetchDataAgain = async (key)=>{
 const ForumDetails = () =>{
     const {id} = useParams();
     const [cookies,] = useCookies();
+    const [pageNumber, setPageNumber] =useState(0);
+    const [hasMore,setHasMore] = useState(true);
+    //use !data.last as the has more
 
     let token = "";
     if(cookies.ilyToken != null)
@@ -32,13 +42,34 @@ const ForumDetails = () =>{
 
     //const {posts,isPending} = useQuery(['forumId',id],fetchData,{keepPreviousData:true})
     const url = `${host}/api/v1/forums/id/${id}`;
-    const [forum,isPending,error] = useFetch(url);
+    const [forum,isPending,forumError] = useFetch(url);
 
-    const {data,isLoading} = useQuery(['posts',id,token],fetchDataAgain,{keepPreviousData:true});
+    //const {data,isLoading} = useQuery(['posts',id,token,pageNumber],fetchData,{keepPreviousData:true});
+    const {
+        data,
+        isLoading,
+        fetchNextPage,
+        hasNextPage,
+        isFetching,
+        isFetchingNextPage,
+        status,
+      } = useInfiniteQuery(['posts',id,token,pageNumber], fetchData, {
+        getNextPageParam: (lastPage, pages) => {
+            console.log(pages);
+            console.log("next page number : ",lastPage);        
+            let nextPage = undefined;
+            if(lastPage.number<lastPage.totalPages-1)
+                nextPage = lastPage.number+1;
+            return (nextPage)
+        },
+      })
     
     console.log(data);
+    
     //var Filter = require('bad-words'),filter = new Filter();
    
+    //the way i used before using the hasNextPage
+    //data.pages!==undefined && data.pages.at(-1).content.length !== 0? !data.pages.at(-1).content.at(-1).last:false 
     return (
     <div className="container">
         {isLoading && <div><Skeleton active/></div>}
@@ -50,12 +81,24 @@ const ForumDetails = () =>{
                 </List.Item>
             </div>}
 
-        <div>{error && <div>{error}</div>}</div>
+        <div>{forumError && <div>{forumError}</div>}</div>
         <div>{isPending && <div><Skeleton active/><Skeleton active/><Skeleton active/></div>}</div>
-        <div>{data && 
-            <Suspense fallback={<Skeleton/>}>
-                <Posts postsData={data} isFromProfile={false}/>
-            </Suspense>}</div>
+        <div>{data &&
+        <InfiniteScroll
+            pageStart={pageNumber}
+            loadMore={fetchNextPage}
+            hasMore={hasNextPage}
+            loader={<div className="loader" key={1}><Skeleton/></div>}
+        >
+            {data.pages.length && data.pages.map(post=>{
+                return(
+                    <Suspense fallback={<Skeleton/>}>
+                        <Posts postsData={post} isFromProfile={false}/>
+                    </Suspense>
+                )
+            })}
+        </InfiniteScroll>}
+            </div>
     </div>)
 }
 export default ForumDetails;

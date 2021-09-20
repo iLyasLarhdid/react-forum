@@ -67,7 +67,7 @@ const Posts = ({postsData,isFromProfile})=>{
 
         
     useEffect(()=>{
-        if(posts.length === 0)
+        if(posts!==undefined && posts && posts.length === 0)
             setDoPostsExist(false);
         else
             setDoPostsExist(true);
@@ -178,7 +178,7 @@ const Posts = ({postsData,isFromProfile})=>{
             console.log("error while posting");
             console.log(err);
         });
-        sleep(200).then(()=>{window.scrollTo(0,document.body.scrollHeight)});
+        //sleep(200).then(()=>{window.scrollTo(0,document.body.scrollHeight)});
       };
 
     return (

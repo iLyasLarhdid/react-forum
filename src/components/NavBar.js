@@ -20,9 +20,6 @@ const NavBar = () =>{
           <li className="nav-item">
             <Link className="nav-link active" aria-current="page" to="/">Home</Link>
           </li>
-          {role ? <li className="nav-item">
-            <Link className="nav-link" aria-current="page" to="/messenger">messages</Link>
-          </li> :""}
           {!role ? <li className="nav-item"><Link className="nav-link" to="/signup">sign up</Link></li>:""}
           <li className="nav-item">
             {!role ? <Link className="nav-link" to="/login">login</Link> : <Link className="nav-link" to="/logout">logout</Link>}

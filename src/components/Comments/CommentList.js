@@ -2,14 +2,13 @@ import { useParams } from "react-router";
 import Comments from "./Comments";
 import useFetch from "../../hooks/useFetch";
 import properties from "../../properties";
-import { useInfiniteQuery, useQuery } from "react-query";
+import { useInfiniteQuery,  } from "react-query";
 import { useCookies } from "react-cookie";
 import { List, Skeleton, Comment, Tooltip } from "antd";
 import Avatar from "antd/lib/avatar/avatar";
 import { Link } from "react-router-dom";
 import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled,CommentOutlined} from '@ant-design/icons';
-import { useEffect, useState } from "react";
-import Posts from "../Posts/Posts";
+import { useState } from "react";
 import InfiniteScroll from "react-infinite-scroller";
 
 const {host,avatarProp} = properties;
@@ -66,10 +65,7 @@ const CommentList = ()=>{
         data,
         isLoading,
         fetchNextPage,
-        hasNextPage,
-        isFetching,
-        isFetchingNextPage,
-        status,
+        hasNextPage
       } = useInfiniteQuery(['comments',id,token], fetchData, {
         getNextPageParam: (lastPage, pages) => {
             console.log(pages);
@@ -80,15 +76,14 @@ const CommentList = ()=>{
             return (nextPage)
         },
       })
-    console.log("data");
-    console.log(data);
+    //console.log("data");
+    //console.log(data);
     const url = `${host}/api/v1/posts/id/${id}`;
     const [posts,isPending,error] = useFetch(url);
     
-    const [post,setPost] = useState();
-    console.log(post);
-    console.log("com=====>");
-    console.log(posts);
+    //console.log(post);
+    //console.log("com=====>");
+    //console.log(posts);
 
     const like = (postId) => {
         fetch(`${host}/api/v1/postActions/postId/${postId}/state/like`,{
@@ -101,8 +96,9 @@ const CommentList = ()=>{
         }).then(data=>{
             console.log("post actions======>");
             console.log(data);
-            setIsDisLiked(false);
-            setIsLiked(true);
+            setIsDisLiked(data.dislikedByPrincipal);
+            setIsLiked(data.likedByPrincipal);
+            console.log(isLiked+"-"+isDisLiked);
         });
       };
     
@@ -117,8 +113,9 @@ const CommentList = ()=>{
         }).then(data=>{
             console.log("post actions======>");
             console.log(data);
-            setIsDisLiked(true);
-            setIsLiked(false);
+            setIsDisLiked(data.dislikedByPrincipal);
+            setIsLiked(data.likedByPrincipal);
+            console.log(isLiked+"-"+isDisLiked);
         }); 
         //console.log(posts);
       };

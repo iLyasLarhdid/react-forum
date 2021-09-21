@@ -13,17 +13,13 @@ const layout = {
     },
   };
 
-  const validateMessages = {
-    required: '${label} is required!'
-  };
-
 
 const FormMessage=({conversationMessages})=>{
   const [cookies,] = useCookies([]);
   const [form] = Form.useForm();
-  const [messages,setMessages]=useState(conversationMessages);
+  const [messages,]=useState(conversationMessages);
   const [newMessages,setNewMessages]=useState([]);
-  const [conversationId,setConversationId] = useState("2c919ec17bf5f372017bf5f4474f0000");
+  const [conversationId,] = useState("2c919ec17bf5f372017bf5f4474f0000");
 
   console.log("conver mess:");
   console.log(conversationMessages);
@@ -89,8 +85,11 @@ const FormMessage=({conversationMessages})=>{
       return (<div key={message.id}>{message.sender.firstName} : {message.message}</div>);
     })}</div>
     </div>
-    <Form {...layout} name="nest-messages" onFinish={onFinish} validateMessages={validateMessages} form={form}>
-      <Form.Item name={['message']}>
+    <Form {...layout} name="nest-messages" onFinish={onFinish} form={form}>
+      <Form.Item 
+      name={['message']}
+      rules={[{ required: true, message: "This field shouldn't be empty!" }]}
+      >
         <Input.TextArea />
       </Form.Item>
       <Form.Item>

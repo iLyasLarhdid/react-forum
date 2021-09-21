@@ -28,7 +28,7 @@ const Messages = ()=>{
     const [currentUser, setCurrentUser] = useState(null);
     const [cookies,] = useCookies([]);
 
-    const [pageNumber, setPageNumber] = useState(0);
+    const [pageNumber, ] = useState(0);
 
     let token;
       if(cookies.ilyToken != null)
@@ -57,6 +57,7 @@ const Messages = ()=>{
             <div  className="" style={{ background:"#FDFAF9", borderRadius:"10px", marginRight:"1rem", padding:"1rem",marginBottom:"1rem"}}>
                 
                 {currentUser && <div>{currentUser}</div>}
+                {isLoading && <div>loading...</div>}
                 <div style={{ position:"relative", bottom:"0px" }}>
                     <FormMessage conversationMessages={data}/>
                 </div>

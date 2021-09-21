@@ -1,6 +1,6 @@
 import properties from "../../properties";
 import React, { useState } from 'react';
-import { Upload,Button,Tooltip,message,Image, Skeleton, Statistic, Affix } from 'antd';
+import { Upload,Button,Tooltip,message,Image, Skeleton, Statistic } from 'antd';
 import ImgCrop from 'antd-img-crop';
 import { useCookies } from "react-cookie";
 import useFetch from "../../hooks/useFetch";

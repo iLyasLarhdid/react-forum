@@ -61,9 +61,9 @@ const Posts = ({postsData,showForm})=>{
     },[cookies.ilyToken,forumId]);
     
     // sleep time expects milliseconds
-    function sleep (time) {
-        return new Promise((resolve) => setTimeout(resolve, time));
-    }
+    // function sleep (time) {
+    //     return new Promise((resolve) => setTimeout(resolve, time));
+    // }
 
         
     useEffect(()=>{

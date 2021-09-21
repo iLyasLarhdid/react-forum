@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Avatar, Badge,List } from 'antd';
-import properties from "../../properties";
 import { Link } from "react-router-dom";
 
 
 const ChatList =({messagedUsersList,user})=>{
-    const [messagedUsers,setMessagedUsers] = useState(messagedUsersList);
+    const [messagedUsers,] = useState(messagedUsersList);
     return (<>
             <List
             itemLayout="horizontal"

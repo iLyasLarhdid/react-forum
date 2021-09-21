@@ -49,9 +49,10 @@ const Comments =({commentsData,showForm})=>{
     if(!role)
         history.push("/login");
     // sleep time expects milliseconds
-    function sleep (time) {
-        return new Promise((resolve) => setTimeout(resolve, time));
-    }
+    // function sleep (time) {
+    //     return new Promise((resolve) => setTimeout(resolve, time));
+    // }
+    
     const like = (CommentId) => {
         fetch(`${host}/api/v1/commentActions/commentId/${CommentId}/state/like`,{
             headers:{

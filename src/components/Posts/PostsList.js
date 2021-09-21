@@ -2,10 +2,10 @@ import { useParams } from "react-router";
 //import Posts from "./Posts";
 import useFetch from "../../hooks/useFetch";
 import properties from "../../properties";
-import { useInfiniteQuery, useQuery } from "react-query";
+import { useInfiniteQuery } from "react-query";
 import { List, Skeleton } from "antd";
 import { lazy } from "react";
-import { Suspense,useState } from "react";
+import { Suspense } from "react";
 import { useCookies } from "react-cookie";
 import InfiniteScroll from 'react-infinite-scroller';
 const {host} = properties;
@@ -32,7 +32,6 @@ const fetchData = async (key)=>{
 const ForumDetails = () =>{
     const {id} = useParams();
     const [cookies,] = useCookies();
-    const [hasMore,setHasMore] = useState(true);
     //use !data.last as the has more
 
     let token = "";
@@ -48,10 +47,7 @@ const ForumDetails = () =>{
         data,
         isLoading,
         fetchNextPage,
-        hasNextPage,
-        isFetching,
-        isFetchingNextPage,
-        status,
+        hasNextPage
       } = useInfiniteQuery(['posts',id,token], fetchData, {
         getNextPageParam: (lastPage, pages) => {
             console.log(pages);

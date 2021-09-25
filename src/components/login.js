@@ -44,21 +44,21 @@ const Login = ()=>{
             else{
                 const accessToken = response.headers.get("accessToken");
                 const refreshToken = response.headers.get("refreshToken");
-                setCookie("ilyToken",accessToken,{path:"/",maxAge:86400});
+                setCookie("ilyToken",accessToken,{path:"/",maxAge:604800});
                 setCookie("ilyRefreshToken",refreshToken,{path:"/",maxAge:604800});
             }
             setIsButtonLoading(false);
             return response.json();
         }).then(data=>{
             //console.log("data",data);
-            setCookie("principal_id",data.id,{path:"/",maxAge:86400});
-            setCookie("principal_first_name",data.firstName,{path:"/",maxAge:86400});
-            setCookie("principal_last_name",data.lastName,{path:"/",maxAge:86400});
-            setCookie("principal_email",data.email,{path:"/",maxAge:86400});
-            setCookie("principal_role",data.role,{path:"/",maxAge:86400});
+            setCookie("principal_id",data.id,{path:"/",maxAge:604800});
+            setCookie("principal_first_name",data.firstName,{path:"/",maxAge:604800});
+            setCookie("principal_last_name",data.lastName,{path:"/",maxAge:604800});
+            setCookie("principal_email",data.email,{path:"/",maxAge:604800});
+            setCookie("principal_role",data.role,{path:"/",maxAge:604800});
 
             if(data.avatar!==null){
-                setCookie("principal_avatar",`${host}/upload/viewFile/${data.avatar}`,{path:"/",maxAge:86400});
+                setCookie("principal_avatar",`${host}/upload/viewFile/${data.avatar}`,{path:"/",maxAge:604800});
             }
 
             setRole(data.role);

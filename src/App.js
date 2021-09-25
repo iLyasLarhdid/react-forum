@@ -1,15 +1,8 @@
-//import Home from './Home';
 import{BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-// import Login from './components/login';
 import { UserContext } from './hooks/UserContext';
 import { useState, Suspense, lazy } from 'react';
 import { useCookies } from 'react-cookie';
-// import CommentList from './components/Comments/CommentList';
-// import Logout from './components/Logout';
 import NavBar from './components/NavBar';
-// import Signup from './components/signup';
-// import ForumDetails from './components/Posts/PostsList';
-// import Profile from './components/Profiles/Profile';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 const Home = lazy(()=>import ('./Home'));

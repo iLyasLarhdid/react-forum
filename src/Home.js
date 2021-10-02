@@ -55,16 +55,10 @@ const Home = ()=>{
                 } ).then(response=>{
                     const accessToken = response.headers.get("accessToken");
                     const refreshToken = response.headers.get("refreshToken");
-                    console.log("access"+accessToken);
                     setCookie("ilyToken",accessToken,{path:"/",maxAge:604800});
                     setCookie("ilyRefreshToken",refreshToken,{path:"/",maxAge:604800});
                     window.location.reload();
-                    //history.push('/login');
-                    //return response.json();
-                }).then(data=>{
-                    console.log(data);
-                });
-                console.log("hello");
+                })
             };
     }
     

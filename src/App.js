@@ -4,6 +4,7 @@ import { useState, Suspense, lazy } from 'react';
 import { useCookies } from 'react-cookie';
 import NavBar from './components/NavBar';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import Messages from './components/messages/Messages';
 
 const Home = lazy(()=>import ('./Home'));
 const Logout = lazy(()=>import ('./components/Logout'));
@@ -58,6 +59,9 @@ function App() {
         <Suspense fallback={<div>loading..</div>}>
           <Logout/>
         </Suspense>
+        </Route>
+        <Route exact path="/messages">
+          <Messages/>
         </Route>
       </Switch>
     </UserContext.Provider>

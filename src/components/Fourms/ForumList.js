@@ -121,7 +121,6 @@ const ForumList = ({forumData}) =>{
             formUpdate.resetFields();
         }).catch((err)=>{
             message.error({content:'something went wrong! try again', key:"adding", duration:2});
-            message.error(err);
         });
 
     }
@@ -143,7 +142,6 @@ const ForumList = ({forumData}) =>{
     }
     //adding forum 
     const addForum = (values) => {
-        console.log(values);
         if(values.title.length < 5){
             message.warning("title needs to be more than 4 characters")
             return;
@@ -177,7 +175,6 @@ const ForumList = ({forumData}) =>{
             form.resetFields();
         }).catch((err)=>{
             message.error({content:'something went wrong! try again', key:"adding", duration:2});
-            message.error(err);
         });
       };
 

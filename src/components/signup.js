@@ -37,13 +37,14 @@ const Signup = ()=>{
         setIsButtonLoading(true);
         const firstName = values.firstName;
         const lastName = values.lastName;
+        const userName = values.userName;
         const email = values.email;
         const password = values.password;
         if(values.password === values.passwordConfirmation){
         fetch(url , {
             method:"POST",
             headers:{"Content-Type" : "application/json"},
-            body: JSON.stringify({firstName,lastName,email,password})
+            body: JSON.stringify({firstName,lastName,userName,email,password})
         }).then(response=>{
             if(!response.ok){ throw Error("something went wrong")}
             setIsButtonLoading(false);
@@ -99,6 +100,13 @@ const Signup = ()=>{
                 label="last name"
                 name="lastName"
                 rules={[{ required: true, message: 'Please input your last name!' }]}
+            >
+                <Input prefix={<UserOutlined className="site-form-item-icon" />}/>
+            </Form.Item>
+            <Form.Item
+                label="user name"
+                name="userName"
+                rules={[{ required: true, message: 'Please input your user name!' }]}
             >
                 <Input prefix={<UserOutlined className="site-form-item-icon" />}/>
             </Form.Item>

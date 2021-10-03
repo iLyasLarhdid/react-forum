@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import InfiniteScroll from "react-infinite-scroller";
 import { useInfiniteQuery } from "react-query";
@@ -6,8 +6,9 @@ import SockJS from "sockjs-client";
 import properties from "../../properties";
 import Conversation from "./Conversations";
 import Stomp from "stompjs";
-import { Form, Skeleton } from "antd";
+import { Skeleton } from "antd";
 import FormConversation from "./FormConversation";
+import FormMessages from "./FormMessages";
 const {host} = properties;
 
 const fetchData = async (key)=>{
@@ -53,33 +54,36 @@ const Messages = ()=>{
         },
       });
 
+      console.log("converastion ====================================>",currentConversation);
     
-    if(currentConversation[0]!==undefined || currentConversation[1]!==undefined){
-        let sock = new SockJS(url);
-        let stompClient = Stomp.over(sock);
-        console.log("current convo is : ",currentConversation[0]);
-        
-        stompClient.connect({"Authorization": cookie.ilyToken},(frame)=>{
-            console.log("connecting to : "+ frame);
-            if(currentConversation[1]!==undefined){
-                console.log("i am in ============>",currentConversation);
-                console.log("closing the convo",currentConversation[1]);
-                //closing the previous connectiong to open the new one
-                //sock.close();
-                stompClient.unsubscribe(`${currentConversation[1]}`);
-            }
-            stompClient.subscribe(`/queue/to/${currentConversation[0]}`
-                ,(response)=>{
-                let data = JSON.parse(response.body);
-                console.log("data from ws===========>");
-                console.log(data);
-                
-                setMessages(prevM=>{return [...prevM,data]});
-                //sleep(50).then(()=>{scroller.scrollTo({top:scroller.scrollHeight,left:0,behavior:'smooth'},document.body.scrollHeight)});
-                },{id:`${currentConversation[1]}`}
-            );
-        })
-      }
+    useEffect(()=>{
+        if(currentConversation[0]!==undefined || currentConversation[1]!==undefined){
+            let sock = new SockJS(url);
+            let stompClient = Stomp.over(sock);
+            console.log("current convo is : ",currentConversation[0]);
+            
+            stompClient.connect({"Authorization": cookie.ilyToken},(frame)=>{
+                console.log("connecting to : "+ frame);
+                console.log(stompClient.subscriptions);
+                if(currentConversation[1]!==undefined){
+                    console.log("closing the convo",currentConversation[1]);
+                    //there is a problem with unsubscribing from a stomp client
+                    //even when you unsubscribe successfully you still get messages
+                    stompClient.unsubscribe(`${currentConversation[1]}`);
+                }
+                stompClient.subscribe(`/queue/to/${currentConversation[0]}`
+                    ,(response)=>{
+                    let data = JSON.parse(response.body);
+                    console.log("data from ws===========>");
+                    console.log(data);
+                    console.log("c c=================>:",currentConversation);
+                    if(currentConversation[0]===data.conversation.id)
+                    setMessages(prevM=>{return [...prevM,data]});
+                    },{id:`${currentConversation[0]}`}
+                );
+            })
+          }
+    },[cookie.ilyToken,url,currentConversation])
 
       console.log("the messages data : ",data);
       return (
@@ -108,7 +112,7 @@ const Messages = ()=>{
                   loader={<div className="loader" key={1}><Skeleton/></div>}
                   >
   
-                  {data.pages.length && data.pages.map((messages,index)=>{
+                  <div>{data.pages.length && data.pages.map((messages,index)=>{
                       return(
                           <>{messages && messages.content!== undefined && messages.content.map((message,index)=>{
                               return(
@@ -117,17 +121,18 @@ const Messages = ()=>{
                           })}</>
                               
                       )
-                  })}
-                  {messages && messages.length>0 && messages.content.map((message)=>{
-                      return(<div key={message.id}>{message.message}</div>)
+                  })}</div>
+                  <div>new messages : </div>
+                  <div>{messages && messages.map((message)=>{
+                      return(<div key={message.id}>{message.sender.firstName} : {message.message}--{message.conversation.id}</div>)
                   })
-                  }
+                  }</div>
   
                   </InfiniteScroll>
-            </div>
-            <Form/>
+            </div> 
             </>
           }
+          {currentConversation[0] && <FormMessages currentConversation={currentConversation} receiver={null}/>}
           </div>
           </>
       );

@@ -1,14 +1,19 @@
-import { Form } from "antd";
+import { Button, Form, Input } from "antd";
+import { useState } from "react";
 import { useCookies } from "react-cookie";
 import properties from "../../properties";
 
-const Form =({conversationId,receiver})=>{
+const layout = {
+    wrapperCol: {
+      span: 24,
+    },
+  };
+
+const FormMessages =({currentConversation,receiver})=>{
     const [form] = Form.useForm();
     const [isButtonLoading, setIsButtonLoading] = useState(false);
     const {host} = properties;
     const [cookie,] = useCookies();
-
-    console.log(props);
 
     const sendMessage = (values)=>{
         if(values.message.length<1){
@@ -18,12 +23,13 @@ const Form =({conversationId,receiver})=>{
         setIsButtonLoading(true);
         const url = `${host}/api/v1/messages`;
         const message = values.message;
+        const conversationId = currentConversation[0];
 
         fetch(url,{
             method:'POST',
             headers:{
                 'Content-Type' : 'application/json',
-                'Authorization': cookies.ilyToken
+                'Authorization': cookie.ilyToken
             },
             body:JSON.stringify({message,receiver,conversationId})
         })
@@ -63,4 +69,4 @@ const Form =({conversationId,receiver})=>{
     </>);
 }
 
-export default Form;
+export default FormMessages;

@@ -117,10 +117,10 @@ const Conversation = ({currentConversation,setCurrentConversation})=>{
             <>{data.pages.length && data.pages.map((conversations,index)=>{
                 return conversations.content.map((conversation,index)=>{
                     return(
-                        <>{currentConversation === conversation.id ? 
-                        <div id={`convo${conversation.id}`} onClick={()=>setCurrentConversation([conversation.id,currentConversation[0]])} style={{ color : "white", background : "black" , borderRadius : "10px"}} key={index} onDoubleClick={()=>deleteConversationByConversationId(conversation.id,true)}>{conversation.id}</div>
+                        <>{currentConversation[0] === conversation.id ? 
+                        <div id={`convo${conversation.id}`} onClick={()=>setCurrentConversation(prev=>[conversation.id,prev[0]])} style={{ color : "white", background : "black" , borderRadius : "10px"}} key={index} onDoubleClick={()=>deleteConversationByConversationId(conversation.id,true)}>{conversation.id}</div>
                            :
-                        <div id={`convo${conversation.id}`} onClick={()=>setCurrentConversation([conversation.id,currentConversation[0]])} key={index} onDoubleClick={()=>deleteConversationByConversationId(conversation.id)} onDoubleClick={()=>deleteConversationByConversationId(conversation.id,false)}>{conversation.id}</div>}
+                        <div id={`convo${conversation.id}`} onClick={()=>setCurrentConversation(prev=>[conversation.id,prev[0]])} key={index} onDoubleClick={()=>deleteConversationByConversationId(conversation.id)} onDoubleClick={()=>deleteConversationByConversationId(conversation.id,false)}>{conversation.id}</div>}
                         </>
                     )
                 });
@@ -129,10 +129,10 @@ const Conversation = ({currentConversation,setCurrentConversation})=>{
             <>
             {conversations.length && conversations.map((conversation,index)=>{
                 return(<>
-                    <>{currentConversation === conversation.id ? 
-                    <div id={`convo${conversation.id}`} onClick={()=>setCurrentConversation([conversation.id,currentConversation[0]])} style={{ color : "white", background : "black" , borderRadius : "10px"}} key={index} onDoubleClick={()=>deleteConversationByConversationId(conversation.id,true)} >{conversation.id}-------{index}</div>
+                    <>{currentConversation[0] === conversation.id ? 
+                    <div id={`convo${conversation.id}`} onClick={()=>setCurrentConversation(prev=>[conversation.id,prev[0]])} style={{ color : "white", background : "black" , borderRadius : "10px"}} key={index} onDoubleClick={()=>deleteConversationByConversationId(conversation.id,true)} >{conversation.id}-------{index}</div>
                            :
-                    <div id={`convo${conversation.id}`} onClick={()=>setCurrentConversation([conversation.id,currentConversation[0]])} key={index} onDoubleClick={()=>deleteConversationByConversationId(conversation.id,false)}>{conversation.id}-------{index}</div>}
+                    <div id={`convo${conversation.id}`} onClick={()=>setCurrentConversation(prev=>[conversation.id,prev[0]])} key={index} onDoubleClick={()=>deleteConversationByConversationId(conversation.id,false)}>{conversation.id}-------{index}</div>}
                     </>
                 </>)
             })}

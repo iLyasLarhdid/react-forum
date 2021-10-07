@@ -42,6 +42,7 @@ const FormMessages =({currentConversation,receiver})=>{
         .then(data=>{
             console.log(data);
             setIsButtonLoading(false);
+            form.resetFields();
         }).catch((err)=>{
             console.log(err);
             setIsButtonLoading(false);

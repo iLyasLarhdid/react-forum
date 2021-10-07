@@ -30,7 +30,6 @@ const fetchData = async (key)=>{
     } );
 
     setConversations([]);
-
     return res.json();
 }
 
@@ -117,9 +116,9 @@ const Conversation = ()=>{
             loader={<div className="loader"><Skeleton/></div>}
         >
             <>
-            {conversations.length>0 && conversations.map((conversation,index)=>{
+            {conversations && conversations.length>0 && conversations.map((conversation,index)=>{
                 return(<>
-                    <div key={index} id={`convo${conversation.id}`}>
+                    <div key={conversation.id+""+index} id={`convo${conversation.id}`}>
                         <Link className="nav-link" to={`/messages/${conversation.id}`}>
                             {conversation.title}
                         </Link>

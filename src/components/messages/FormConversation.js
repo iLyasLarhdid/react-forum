@@ -25,7 +25,6 @@ const FormConversation=()=>{
         let firstName;
         let lastName;
         let userName;
-        console.log(nameArray," name array");
         if(nameArray.length > 1){
             firstName = nameArray[0];
             lastName = nameArray[1];
@@ -50,7 +49,6 @@ const FormConversation=()=>{
             }
             return response.json()})
         .then(data=>{
-            console.log("searched users",data);
             //setSearchedUsers(data);
             let elements;
             elements  = data.content.map((user)=>({
@@ -58,11 +56,8 @@ const FormConversation=()=>{
               "label":user.firstName+" "+user.lastName
             }));
             setSearchedUsers(elements);
-            message.success({content:'Added successfully', key:"adding", duration:2});
             
-        }).catch((err)=>{
-            message.error({content:'something went wrong! try again', key:"adding", duration:2});
-        });
+        })
     }
 
     
@@ -76,7 +71,9 @@ const FormConversation=()=>{
         console.log("participant values ",values);
         const url = `${host}/api/v1/conversations`;
         const title = values.conversationTitle;
-        const usersIds = {...values.usersIds.value};
+        let elements;
+            elements  = values.usersIds.map((user)=>(user.value));
+        const usersIds = elements;
         console.log("user ids : ",usersIds);
         
         fetch(url,{

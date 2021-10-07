@@ -24,7 +24,7 @@ const FormMessages =({currentConversation,receiver})=>{
         const url = `${host}/api/v1/messages`;
         const message = values.message;
         const conversationId = currentConversation;
-
+        form.resetFields();
         fetch(url,{
             method:'POST',
             headers:{
@@ -42,7 +42,6 @@ const FormMessages =({currentConversation,receiver})=>{
         .then(data=>{
             console.log(data);
             setIsButtonLoading(false);
-            form.resetFields();
         }).catch((err)=>{
             console.log(err);
             setIsButtonLoading(false);

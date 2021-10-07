@@ -105,22 +105,21 @@ const Messages = ()=>{
                   loader={<div className="loader" key={1}><Skeleton/></div>}
                   >
   
+                  <div>{messages && messages.map((message)=>{
+                      return(<div key={message.id}>{message.sender.firstName} : {message.message}</div>)
+                     })
+                    }
+                  </div>
                   <div>{data.pages.length && data.pages.map((messages)=>{
                       return(
                           <>{messages && messages.content!== undefined && messages.content.map((message)=>{
                               return(
-                                      <div key={message.id}>{message.message}</div>
+                                      <div key={message.id}>{message.sender.firstName} : {message.message}</div>
                               )
                           })}</>
                               
                       )
                   })}</div>
-                  <div>new messages : </div>
-                  <div>{messages && messages.map((message)=>{
-                      return(<div key={message.id}>{message.sender.firstName} : {message.message}</div>)
-                  })
-                  }</div>
-  
                   </InfiniteScroll>
             </div> 
             </>

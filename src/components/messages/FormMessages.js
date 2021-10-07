@@ -23,7 +23,7 @@ const FormMessages =({currentConversation,receiver})=>{
         setIsButtonLoading(true);
         const url = `${host}/api/v1/messages`;
         const message = values.message;
-        const conversationId = currentConversation[0];
+        const conversationId = currentConversation;
 
         fetch(url,{
             method:'POST',

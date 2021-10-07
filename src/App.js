@@ -4,7 +4,8 @@ import { useState, Suspense, lazy } from 'react';
 import { useCookies } from 'react-cookie';
 import NavBar from './components/NavBar';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import Messages from './components/messages/Messages';
+//import Messages from './components/messages/Messages';
+import Conversation from './components/messages/Conversations';
 
 const Home = lazy(()=>import ('./Home'));
 const Logout = lazy(()=>import ('./components/Logout'));
@@ -13,7 +14,7 @@ const ForumDetails = lazy(()=>import ('./components/Posts/PostsList'));
 const Profile = lazy(()=>import ('./components/Profiles/Profile'));
 const Login = lazy(()=>import ('./components/login'));
 const CommentList = lazy(()=>import ('./components/Comments/CommentList'));
-//const Messages = lazy(()=>import ('./components/messages/Messages'));
+const Messages = lazy(()=>import ('./components/messages/Messages'));
 
 function App() {
   const [cookies,] = useCookies([]);
@@ -31,37 +32,42 @@ function App() {
           </Suspense>
         </Route>
         <Route exact path="/forums/:id">
-        <Suspense fallback={<div>loading..</div>}>
-          <ForumDetails/>
-        </Suspense>
+          <Suspense fallback={<div>loading..</div>}>
+            <ForumDetails/>
+          </Suspense>
         </Route>
         <Route exact path="/posts/:id">
-        <Suspense fallback={<div>loading..</div>}>
-          <CommentList/>
-        </Suspense>
+          <Suspense fallback={<div>loading..</div>}>
+            <CommentList/>
+          </Suspense>
         </Route>
         <Route exact path="/signup">
-        <Suspense fallback={<div>loading..</div>}>
-          <Signup/>
-        </Suspense>
+          <Suspense fallback={<div>loading..</div>}>
+            <Signup/>
+          </Suspense>
         </Route>
         <Route exact path="/profile/:id">
-        <Suspense fallback={<div>loading..</div>}>
-          <Profile/>
-        </Suspense>
+          <Suspense fallback={<div>loading..</div>}>
+            <Profile/>
+          </Suspense>
         </Route>
         <Route exact path="/login">
-        <Suspense fallback={<div>loading..</div>}>
-          <Login/>
-        </Suspense>
+          <Suspense fallback={<div>loading..</div>}>
+            <Login/>
+          </Suspense>
         </Route>
         <Route exact path="/logout">
-        <Suspense fallback={<div>loading..</div>}>
-          <Logout/>
-        </Suspense>
+          <Suspense fallback={<div>loading..</div>}>
+            <Logout/>
+          </Suspense>
         </Route>
-        <Route exact path="/messages">
-          <Messages/>
+        <Route exact path="/messages/:id">
+          <Suspense fallback={<div>loading..</div>}>
+            <Messages/>
+          </Suspense>
+        </Route>
+        <Route exact path="/conversations">
+          <Conversation/>
         </Route>
       </Switch>
     </UserContext.Provider>

@@ -1,14 +1,12 @@
 import { useState } from "react";
-import { Select,List,message,Popconfirm, Space, Menu, Button,Form, Input, Drawer } from "antd";
+import { message, Button,Form, Input } from "antd";
 import properties from "../../properties";
 import { useCookies } from "react-cookie";
+import Select from "react-select";
 
 const layout = {
-    labelCol: {
-        span: 24,
-      },
     wrapperCol: {
-      span: 12,
+      span: 24,
     },
   };
 
@@ -16,8 +14,9 @@ const FormConversation=()=>{
     const [form] = Form.useForm();
     const {host} = properties;
     const [cookie,] = useCookies();
-    const { Option } = Select;
+    //const { Option } = Select;
     const [searchedUsers,setSearchedUsers] = useState([]);
+    
 
     const handleSearch = (values)=>{
         console.log("handle search : ",values);
@@ -52,12 +51,17 @@ const FormConversation=()=>{
             return response.json()})
         .then(data=>{
             console.log("searched users",data);
-            setSearchedUsers(data);
+            //setSearchedUsers(data);
+            let elements;
+            elements  = data.content.map((user)=>({
+              "value":user.id,
+              "label":user.firstName+" "+user.lastName
+            }));
+            setSearchedUsers(elements);
             message.success({content:'Added successfully', key:"adding", duration:2});
             
         }).catch((err)=>{
             message.error({content:'something went wrong! try again', key:"adding", duration:2});
-            //message.error(err);
         });
     }
 
@@ -71,8 +75,8 @@ const FormConversation=()=>{
     const createConversation=(values)=>{
         console.log("participant values ",values);
         const url = `${host}/api/v1/conversations`;
-        const title = values.ConversationTitle;
-        const usersIds = {...values.usersIds};
+        const title = values.conversationTitle;
+        const usersIds = {...values.usersIds.value};
         console.log("user ids : ",usersIds);
         
         fetch(url,{
@@ -100,11 +104,16 @@ const FormConversation=()=>{
     }
 
     return (<>
-    <div>this is the form conversation{'=======>>>>'}</div>
     <Form {...layout} name="forum" form={form} onFinish={createConversation} autoComplete="false">
         <Form.Item
             label="create new conversation"
             name="conversationTitle"
+            rules={[
+                {
+                    required: true,
+                    message: 'Please specify title!',
+                },
+                ]}
         >
             <Input/>
         </Form.Item>
@@ -114,22 +123,13 @@ const FormConversation=()=>{
             rules={[
             {
                 required: true,
-                message: 'Please select your favourite colors!',
+                message: 'Please select participants!',
                 type: 'array',
             },
             ]}
         >
-            <Select mode="multiple" 
-                placeholder="Select users you want to message"
-                onSearch={handleSearch}>
-            {searchedUsers && searchedUsers.content !== undefined && searchedUsers.content.map((user)=>{
-                return(
-                    <>
-                    <Option value={user.id} key={user.id}>{user.firstName} {user.lastName}</Option>
-                    </>
-                )
-            })}
-            </Select>
+            <Select options={searchedUsers} onInputChange={handleSearch} isMulti/>
+                
         </Form.Item>
         <Form.Item>
             <Button type="primary" htmlType="submit">

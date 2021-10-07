@@ -1,27 +1,60 @@
 import properties from "../../properties";
-import React, { useState } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import { Upload,Button,Tooltip,message,Image, Skeleton, Statistic } from 'antd';
 import ImgCrop from 'antd-img-crop';
 import { useCookies } from "react-cookie";
-import useFetch from "../../hooks/useFetch";
-import Posts from "../Posts/Posts";
 import { CommentOutlined } from '@ant-design/icons';
 import ProfileSideBar from "./profileSideBar";
+import { useInfiniteQuery } from "react-query";
+import InfiniteScroll from "react-infinite-scroller";
+const Posts = lazy(()=>import ('../Posts/Posts'));
 
 const {host,avatarProp} = properties;
+
+const fetchData = async (key)=>{
+    const userId = key.queryKey[1];
+    const token = key.queryKey[2];
+    let page;
+    if(typeof key.pageParam === "undefined")
+        page=0;
+    else
+        page = key.pageParam;
+    console.log(key);
+    const res = await fetch(`${host}/api/v1/posts/userId/${userId}/page/${page}`,{
+        headers: {
+            'Content-Type' : 'application/json',
+            'Authorization': token
+        }
+    } )
+    return res.json();
+}
 
 const ProfileDetails = ({profile})=>{
 
     const [showUploadButton, setShowUploadButton] = useState(false);
     const [fileList, setFileList] = useState([]);
     const [showUploadField,setShowUploadField] = useState(false);
-    const [cookies,setCookies] = useCookies();
-    const [profileData,] = useState(profile)
+    const [cookie,setCookie] = useCookies();
+    const [profileData,] = useState(profile);
 
-    const url = `${host}/api/v1/posts/userId/${profileData.id}`;
-    const [posts,isPending,error] = useFetch(url);
+    const {
+        data,
+        isLoading,
+        fetchNextPage,
+        hasNextPage
+      } = useInfiniteQuery(['posts',profileData.id,cookie.ilyToken], fetchData, {
+        getNextPageParam: (lastPage, pages) => {
+            console.log(pages);
+            console.log("next page number : ",lastPage);        
+            let nextPage = undefined;
+            if(lastPage.number<lastPage.totalPages-1)
+                nextPage = lastPage.number+1;
+            return (nextPage)
+        },
+      })
 
-    console.log(posts);
+      console.log("data ....... ",data);
+      console.log(hasNextPage);
     const onChange = ({ fileList: newFileList }) => {
         setFileList(newFileList);
         setShowUploadButton(true);
@@ -55,7 +88,7 @@ const ProfileDetails = ({profile})=>{
         fetch(url,{
             method:"post",
             headers: {
-                'Authorization': cookies.ilyToken
+                'Authorization': cookie.ilyToken
             },
             body:formData
         })
@@ -67,7 +100,7 @@ const ProfileDetails = ({profile})=>{
         }).then(data=>{
             console.log("upload=>");
             console.log(data);
-            setCookies("principal_avatar",data.fileUri);
+            setCookie("principal_avatar",data.fileUri);
             message.success({content:'Updated successfully', key:"updating", duration:2});
             //const index = JSON.stringify(data);
             setFileList([]);
@@ -125,21 +158,13 @@ const ProfileDetails = ({profile})=>{
                     Start Upload
             </Button>}</>}
             <div>
-            {profileData.id === cookies.principal_id && <Tooltip key="comment-basic-like" title="click to change avatar"><Button type="link" onClick={()=>setShowUploadField(!showUploadField)}>upload picture </Button></Tooltip>}
+            {profileData.id === cookie.principal_id && <Tooltip key="comment-basic-like" title="click to change avatar"><Button type="link" onClick={()=>setShowUploadField(!showUploadField)}>upload picture </Button></Tooltip>}
             </div>
 
             <div><b>{profileData.firstName} {profileData.lastName}</b></div>
             <div>{profileData.email}</div>
-            {posts && <div><Statistic title="Total number of posts" value={posts.totalElements} prefix={<CommentOutlined />} /></div>}
+            {data && <div><Statistic title="Total number of posts" value={data.pages[0].totalElements} prefix={<CommentOutlined />} /></div>}
         </div>
-        
-        <div  className="col-lg-6 col-xl-5" style={{ background:"#FDFAF9", borderRadius:"10px", marginRight:"1rem", padding:"1rem",overflowY:"scroll",height:"100vh",marginBottom:"1rem"}}>
-            <div>{error && <div>{error}</div>}</div>
-            <div>{isPending && <div><Skeleton active/><Skeleton active/><Skeleton active/></div>}</div>
-            <div>{posts && <Posts postsData={posts} isFromProfile={true}/>} {posts&& <>Pagination here {posts.totalElements}</>}</div>
-            
-        </div>
-        
 
         <div className="col-lg-4 col-xl-3" style={{ background:"#edeff0", borderRadius:"10px", padding:"1rem",marginBottom:"1rem"}}>
             
@@ -150,6 +175,28 @@ const ProfileDetails = ({profile})=>{
                 </div>
             
         </div>
+        
+        <div  className="col-lg-6 col-xl-5" style={{ background:"#FDFAF9", borderRadius:"10px", marginRight:"1rem", padding:"1rem",height:"100vh",marginBottom:"1rem"}}>
+            <div>{isLoading && <div><Skeleton active/><Skeleton active/><Skeleton active/></div>}</div>
+
+            <InfiniteScroll
+            pageStart={0}
+            loadMore={fetchNextPage}
+            hasMore={hasNextPage}
+            loader={<div className="loader"><Skeleton/></div>}
+            >
+            {data && data.pages.length && data.pages.map((post,index)=>{
+                return(
+                    <Suspense fallback={<Skeleton/>}>
+                        <Posts postsData={post} showForm={false}/>
+                    </Suspense>
+                )
+            })}
+            </InfiniteScroll>
+        </div>
+        
+
+        
         
     </div>
     </div>)

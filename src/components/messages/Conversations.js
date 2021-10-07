@@ -5,13 +5,17 @@ import SockJS from "sockjs-client";
 import properties from "../../properties";
 import { useEffect, useState } from "react";
 import Stomp from "stompjs";
-import { Skeleton,message } from "antd";
+import { Skeleton,message, Popconfirm, Button,Space } from "antd";
+import { Link } from "react-router-dom";
+import FormConversation from "./FormConversation";
 
 
 const {host} = properties;
 
 const fetchData = async (key)=>{
     const token = key.queryKey[1];
+    const setConversations = key.queryKey[2];
+    console.log("set cnvoooooooooooo ",key);
     let page;
     if(typeof key.pageParam === "undefined")
         page=0;
@@ -23,15 +27,14 @@ const fetchData = async (key)=>{
             'Content-Type' : 'application/json',
             'Authorization': token
         }
-    } )
+    } );
+
+    setConversations([]);
+
     return res.json();
 }
 
-const checkForDuplicates = (value)=>{
-
-}
-
-const Conversation = ({currentConversation,setCurrentConversation})=>{
+const Conversation = ()=>{
     const [cookie,] = useCookies();
     const [conversations,setConversations] = useState([]);
 
@@ -49,7 +52,7 @@ const Conversation = ({currentConversation,setCurrentConversation})=>{
         isLoading,
         fetchNextPage,
         hasNextPage
-      } = useInfiniteQuery(['conversations',token], fetchData, {
+      } = useInfiniteQuery(['conversations',token,setConversations], fetchData, {
         getNextPageParam: (lastPage, pages) => {
             console.log(pages);
             console.log("next page number : ",lastPage);        
@@ -78,10 +81,8 @@ const Conversation = ({currentConversation,setCurrentConversation})=>{
         })
     },[token,userId,url])
       
-    const deleteConversationByConversationId = (id,isInConversation)=>{
+    const deleteConversationByConversationId = (id)=>{
         const url = `${host}/api/v1/conversations`;
-        if(isInConversation)
-            setCurrentConversation(null);
         fetch(url,{
             method:"delete",
             headers: {
@@ -105,7 +106,8 @@ const Conversation = ({currentConversation,setCurrentConversation})=>{
     console.log("the conversation already created : ",data);
     return (
     <>
-    here is the conversations
+    <div className="container">
+    <FormConversation/>
     {isLoading && <div>loading ...</div>}
     <div>{data &&
         <InfiniteScroll
@@ -114,32 +116,47 @@ const Conversation = ({currentConversation,setCurrentConversation})=>{
             hasMore={hasNextPage}
             loader={<div className="loader"><Skeleton/></div>}
         >
-            <>{data.pages.length && data.pages.map((conversations,index)=>{
+            <>
+            {conversations.length>0 && conversations.map((conversation,index)=>{
+                return(<>
+                    <div key={index} id={`convo${conversation.id}`}>
+                        <Link className="nav-link" to={`/messages/${conversation.id}`}>
+                            {conversation.title}
+                        </Link>
+                        <Popconfirm title="Sure to cancel?" onConfirm={()=>deleteConversationByConversationId(conversation.id)}>
+                            <Button type="primary" danger>
+                            Delete
+                            </Button>
+                        </Popconfirm>
+                    </div>
+                </>)
+            })}
+            </>
+            <>{data.pages.length && data.pages.map((conversations)=>{
                 return conversations.content.map((conversation,index)=>{
                     return(
-                        <>{currentConversation[0] === conversation.id ? 
-                        <div id={`convo${conversation.id}`} onClick={()=>setCurrentConversation(prev=>[conversation.id,prev[0]])} style={{ color : "white", background : "black" , borderRadius : "10px"}} key={index} onDoubleClick={()=>deleteConversationByConversationId(conversation.id,true)}>{conversation.id}</div>
-                           :
-                        <div id={`convo${conversation.id}`} onClick={()=>setCurrentConversation(prev=>[conversation.id,prev[0]])} key={index} onDoubleClick={()=>deleteConversationByConversationId(conversation.id)} onDoubleClick={()=>deleteConversationByConversationId(conversation.id,false)}>{conversation.id}</div>}
+                        <>
+                        
+                        <div key={index} id={`convo${conversation.id}`}>
+                        <Space size={2}>
+                        <Link className="nav-link" to={`/messages/${conversation.id}`}>
+                            {conversation.title}
+                        </Link>
+                        <Popconfirm title="Sure to delete?" onConfirm={()=>deleteConversationByConversationId(conversation.id)}>
+                            <Button type="primary" danger>
+                            Delete
+                            </Button>
+                        </Popconfirm>
+                        </Space>
+                        </div>
                         </>
                     )
                 });
                 
             })}</>
-            <>
-            {conversations.length && conversations.map((conversation,index)=>{
-                return(<>
-                    <>{currentConversation[0] === conversation.id ? 
-                    <div id={`convo${conversation.id}`} onClick={()=>setCurrentConversation(prev=>[conversation.id,prev[0]])} style={{ color : "white", background : "black" , borderRadius : "10px"}} key={index} onDoubleClick={()=>deleteConversationByConversationId(conversation.id,true)} >{conversation.id}-------{index}</div>
-                           :
-                    <div id={`convo${conversation.id}`} onClick={()=>setCurrentConversation(prev=>[conversation.id,prev[0]])} key={index} onDoubleClick={()=>deleteConversationByConversationId(conversation.id,false)}>{conversation.id}-------{index}</div>}
-                    </>
-                </>)
-            })}
-            </>
         </InfiniteScroll>}
     </div>
-    
+    </div>
     </>)
 
 }

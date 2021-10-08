@@ -93,7 +93,11 @@ const Messages = ()=>{
               style={{ height:300,
                   overflow:'auto',
                   display:'flex',
-                  flexDirection:'column-reverse'
+                  flexDirection:'column-reverse',
+                  background:"#FDFAF9",
+                  borderRadius:"10px",
+                  padding:"1rem",
+                  marginTop:"1rem"
               }}
             >
                 <InfiniteScroll
@@ -106,15 +110,34 @@ const Messages = ()=>{
                   >
   
                   <div>{messages && messages.map((message)=>{
-                      return(<div key={message.id}>{message.sender.firstName} : {message.message}</div>)
+                      return(<>{message.sender.id === cookie.principal_id ? 
+                      <div key={message.id} style={{ textAlign:"right" }}><div style={{  background:"#00B2FF",display:"inline-block",color:"white", paddingRight:"1rem", paddingLeft:"1rem",marginTop:"0.5rem"  }}>{message.sender.firstName} : {message.message}</div></div>
+                      :
+                      <div key={message.id}>
+                          <div style={{  background:"#075E54",display:"inline-block",color:"white", paddingRight:"1rem", paddingLeft:"1rem",marginTop:"0.5rem"  }}>
+                              {message.sender.firstName} : {message.message}
+                            </div>
+                        </div>}</>)
                      })
                     }
                   </div>
+                  <div>{messages && messages.length>0 && <div style={{ textAlign:"center", background:"#25D366", marginTop:"1rem"}}>new messages</div>}</div>
                   <div>{data.pages.length && data.pages.map((messages)=>{
                       return(
                           <>{messages && messages.content!== undefined && messages.content.map((message)=>{
                               return(
-                                      <div key={message.id}>{message.sender.firstName} : {message.message}</div>
+                                <>{message.sender.id === cookie.principal_id ? 
+                                    <div key={message.id} style={{ textAlign:"right"}}>
+                                        <div style={{  background:"#00B2FF",display:"inline-block",color:"white", paddingRight:"1rem", paddingLeft:"1rem",marginTop:"0.5rem"  }}>
+                                            {message.sender.firstName} : {message.message}
+                                        </div>
+                                    </div>
+                                    :
+                                    <div key={message.id}>
+                                        <div style={{  background:"#075E54",display:"inline-block",color:"white", paddingRight:"1rem", paddingLeft:"1rem",marginTop:"0.5rem"  }}>
+                                            {message.sender.firstName} : {message.message}
+                                            </div>
+                                    </div>}</>
                               )
                           })}</>
                               

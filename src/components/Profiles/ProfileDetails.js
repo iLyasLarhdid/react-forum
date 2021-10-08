@@ -4,9 +4,9 @@ import { Upload,Button,Tooltip,message,Image, Skeleton, Statistic } from 'antd';
 import ImgCrop from 'antd-img-crop';
 import { useCookies } from "react-cookie";
 import { CommentOutlined } from '@ant-design/icons';
-import ProfileSideBar from "./profileSideBar";
 import { useInfiniteQuery } from "react-query";
 import InfiniteScroll from "react-infinite-scroller";
+import { Link } from "react-router-dom";
 const Posts = lazy(()=>import ('../Posts/Posts'));
 
 const {host,avatarProp} = properties;
@@ -120,17 +120,15 @@ const ProfileDetails = ({profile})=>{
     <div className="container">
     <div className="row">
         
-        <div className="col-lg-4 col-xl-3" style={{ background:"#edeff0", borderRadius:"10px", marginRight:"1rem", padding:"1rem",marginBottom:"1rem"}}>
+        <div className="col-4 col-md-3 col-lg-4 col-xl-3" style={{ background:"#edeff0", borderRadius:"10px", marginRight:"1rem", padding:"1rem",marginBottom:"1rem"}}>
 
             {profileData.avatar ? 
                     <Image
-                    width={200}
                     src={`${host}/upload/viewFile/${profileData.avatar}`}
                     alt="avatar"
                     />
             :
                 <Image
-                    width={250}
                     src={avatarProp}
                     alt="avatar"
                     />}
@@ -163,20 +161,11 @@ const ProfileDetails = ({profile})=>{
 
             <div><b>{profileData.firstName} {profileData.lastName}</b></div>
             <div>{profileData.email}</div>
+            <div><Link to={`/friends/${profileData.id}`}>Friends</Link></div>
             {data && <div><Statistic title="Total number of posts" value={data.pages[0].totalElements} prefix={<CommentOutlined />} /></div>}
         </div>
-
-        <div className="col-lg-4 col-xl-3" style={{ background:"#edeff0", borderRadius:"10px", padding:"1rem",marginBottom:"1rem"}}>
-            
-                <div style={{ overflowY:"scroll",height:"95vh" }}>
-                    <h5>Friends : </h5>
-                    <p>this is just a demo data, before implementing friendships system in the backend and</p>
-                    <ProfileSideBar/>
-                </div>
-            
-        </div>
         
-        <div  className="col-lg-6 col-xl-5" style={{ background:"#FDFAF9", borderRadius:"10px", marginRight:"1rem", padding:"1rem",height:"100vh",marginBottom:"1rem"}}>
+        <div  className="col-7 col-md-8 col-lg-7 col-xl-8" style={{ background:"#FDFAF9", borderRadius:"10px", marginRight:"1rem", padding:"1rem",height:"100vh",marginBottom:"1rem"}}>
             <div>{isLoading && <div><Skeleton active/><Skeleton active/><Skeleton active/></div>}</div>
 
             <InfiniteScroll

@@ -21,7 +21,7 @@ const fetchData = async (key)=>{
 const ProfileSideBar = ()=>{
     const [cookies] = useCookies([]);
     let token = "";
-        
+        //className="col-lg-4 col-xl-3" for previous div
     if(cookies.ilyToken != null)
         token = cookies.ilyToken;
 
@@ -29,6 +29,7 @@ const ProfileSideBar = ()=>{
     console.log(data);
     return(
     <>
+    <div className="container" style={{ background:"#edeff0", borderRadius:"10px", padding:"1rem",marginBottom:"1rem", marginTop:"1rem"}}>
     {/* show friends but for now i will show all users */}
     {isLoading && <div>loadning....</div>}
     {data && 
@@ -36,6 +37,7 @@ const ProfileSideBar = ()=>{
             return (<div><Badge status="success"><Avatar>{user.firstName}</Avatar></Badge> <b><Link to={`/profile/${user.id}`}>{user.firstName} {user.lastName}</Link></b> </div>)
         })
     }
+    </div>
     </>
     );
 }

@@ -120,7 +120,7 @@ const ProfileDetails = ({profile})=>{
     <div className="container">
     <div className="row">
         
-        <div className="col-4 col-md-3 col-lg-4 col-xl-3" style={{ background:"#edeff0", borderRadius:"10px", marginRight:"1rem", padding:"1rem",marginBottom:"1rem"}}>
+        <div className="col-12 col-md-3 col-lg-4 col-xl-3" style={{ background:"#edeff0", borderRadius:"10px", marginRight:"1rem", padding:"1rem",marginBottom:"1rem"}}>
 
             {profileData.avatar ? 
                     <Image
@@ -165,7 +165,7 @@ const ProfileDetails = ({profile})=>{
             {data && <div><Statistic title="Total number of posts" value={data.pages[0].totalElements} prefix={<CommentOutlined />} /></div>}
         </div>
         
-        <div  className="col-7 col-md-8 col-lg-7 col-xl-8" style={{ background:"#FDFAF9", borderRadius:"10px", marginRight:"1rem", padding:"1rem",height:"100vh",marginBottom:"1rem"}}>
+        <div  className="col-12 col-md-8 col-lg-7 col-xl-8" style={{ background:"#FDFAF9", borderRadius:"10px", marginRight:"1rem", padding:"1rem",height:"100vh",marginBottom:"1rem"}}>
             <div>{isLoading && <div><Skeleton active/><Skeleton active/><Skeleton active/></div>}</div>
 
             <InfiniteScroll

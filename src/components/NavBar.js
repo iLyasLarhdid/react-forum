@@ -45,7 +45,9 @@ const NavBar = () =>{
     <div className="container-fluid">
       <Link className="navbar-brand" to="/">Navbar</Link>
       <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+      <Badge count={numberOfMessageNotifications} size="small" offset={[0, 14]}>
         <span className="navbar-toggler-icon"></span>
+      </Badge>
       </button>
       <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
         <ul className="navbar-nav me-auto mb-2 mb-lg-0">

@@ -80,7 +80,11 @@ const Messages = ()=>{
                 );
             })
           }
-    },[cookie.ilyToken,url,id])
+    },[cookie.ilyToken,url,id]);
+
+    useEffect(()=>{
+        setMessages([]);
+    },[data]);
 
       console.log("the messages data : ",data);
       return (

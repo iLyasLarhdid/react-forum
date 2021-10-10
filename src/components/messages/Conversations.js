@@ -61,6 +61,7 @@ const Conversation = ()=>{
             return (nextPage)
         },
       });
+      console.log("conversations =======================> ",data);
 
     useEffect(()=>{
         let sock = new SockJS(url);
@@ -131,17 +132,17 @@ const Conversation = ()=>{
                 </>)
             })}
             </>
-            <>{data.pages.length && data.pages.map((conversations)=>{
-                return conversations.content.map((conversation,index)=>{
+            <>{data.pages.length && data.pages.map((participants)=>{
+                return participants.content.map((participant,index)=>{
                     return(
                         <>
                         
-                        <div key={index} id={`convo${conversation.id}`}>
+                        <div key={index} id={`convo${participant.conversation.id}`}>
                         <Space size={2}>
-                        <Link className="nav-link" to={`/messages/${conversation.id}`}>
-                            {conversation.title}
+                        <Link className="nav-link" to={`/messages/${participant.conversation.id}`}>
+                            {participant.conversation.title}
                         </Link>
-                        <Popconfirm title="Sure to delete?" onConfirm={()=>deleteConversationByConversationId(conversation.id)}>
+                        <Popconfirm title="Sure to delete?" onConfirm={()=>deleteConversationByConversationId(participant.conversation.id)}>
                             <Button type="primary" danger>
                             Delete
                             </Button>

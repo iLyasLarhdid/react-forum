@@ -32,7 +32,7 @@ const NavBar = () =>{
               console.log(data);
               
               setNumberOfMessageNotifications(prev=>prev+1);
-              message.success('hiiiiiii')
+              message.success(`you have got a new message from ${data.title}`)
               //sleep(50).then(()=>{scroller.scrollTo({top:scroller.scrollHeight,left:0,behavior:'smooth'},document.body.scrollHeight)});
               }
           );

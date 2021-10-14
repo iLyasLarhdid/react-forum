@@ -5,7 +5,7 @@ import SockJS from "sockjs-client";
 import properties from "../../properties";
 import { useEffect, useState } from "react";
 import Stomp from "stompjs";
-import { Skeleton,message, Popconfirm, Button,Space } from "antd";
+import { Skeleton,message, Popconfirm, Button,Space, Avatar, Badge } from "antd";
 import { Link } from "react-router-dom";
 import FormConversation from "./FormConversation";
 
@@ -15,13 +15,12 @@ const {host} = properties;
 const fetchData = async (key)=>{
     const token = key.queryKey[1];
     const setConversations = key.queryKey[2];
-    console.log("set cnvoooooooooooo ",key);
     let page;
     if(typeof key.pageParam === "undefined")
         page=0;
     else
         page = key.pageParam;
-        
+
     const res = await fetch(`${host}/api/v1/conversations/page/${page}`,{
         headers: {
             'Content-Type' : 'application/json',
@@ -52,7 +51,7 @@ const Conversation = ()=>{
         fetchNextPage,
         hasNextPage
       } = useInfiniteQuery(['conversations',token,setConversations], fetchData, {
-        getNextPageParam: (lastPage, pages) => {      
+        getNextPageParam: (lastPage) => {      
             let nextPage = undefined;
             if(lastPage.number<lastPage.totalPages-1)
                 nextPage = lastPage.number+1;
@@ -111,9 +110,12 @@ const Conversation = ()=>{
             {conversations && conversations.length>0 && conversations.map((conversation,index)=>{
                 return(<>
                     <div key={conversation.id+""+index} id={`convo${conversation.id}`}>
+                    <Badge dot={true}>
                         <Link className="nav-link" to={`/messages/${conversation.id}`}>
+                            <Avatar>{conversation.title.substring(0,4)}</Avatar>
                             {conversation.title}
                         </Link>
+                    </Badge>
                         <Popconfirm title="Sure to cancel?" onConfirm={()=>deleteConversationByConversationId(conversation.id)}>
                             <Button type="primary" danger>
                             Delete
@@ -127,10 +129,10 @@ const Conversation = ()=>{
                 return participants.content.map((participant,index)=>{
                     return(
                         <>
-                        
                         <div key={index} id={`convo${participant.conversation.id}`}>
                         <Space size={2}>
                         <Link className="nav-link" to={`/messages/${participant.conversation.id}`}>
+                            <Avatar>{participant.conversation.title.substring(0,4)}</Avatar>
                             {participant.conversation.title}
                         </Link>
                         <Popconfirm title="Sure to delete?" onConfirm={()=>deleteConversationByConversationId(participant.conversation.id)}>

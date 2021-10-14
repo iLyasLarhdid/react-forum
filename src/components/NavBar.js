@@ -43,7 +43,7 @@ const NavBar = () =>{
     <Affix>
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
     <div className="container-fluid">
-      <Link className="navbar-brand" to="/">Navbar</Link>
+      <Link className="navbar-brand" to="/">Ily-Forum</Link>
       <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
       <Badge count={numberOfMessageNotifications} size="small" offset={[0, 14]}>
         <span className="navbar-toggler-icon"></span>

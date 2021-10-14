@@ -86,7 +86,7 @@ const Messages = ()=>{
                   marginTop:"1rem"
               }}
             >
-                <div>{messages && messages.slice(0).reverse().map((message)=>{
+                <div>{messages && messages.map((message)=>{
                       return(<>{message.sender.id === cookie.principal_id ? 
                       <div key={message.id} style={{ textAlign:"right" }}><div style={{  background:"#00B2FF",display:"inline-block",color:"white", paddingRight:"1rem", paddingLeft:"1rem",marginTop:"0.5rem"  }}>{message.sender.firstName} : {message.message}</div></div>
                       :

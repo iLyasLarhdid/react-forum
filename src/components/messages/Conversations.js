@@ -21,7 +21,7 @@ const fetchData = async (key)=>{
         page=0;
     else
         page = key.pageParam;
-    console.log(key);
+        
     const res = await fetch(`${host}/api/v1/conversations/page/${page}`,{
         headers: {
             'Content-Type' : 'application/json',
@@ -52,28 +52,21 @@ const Conversation = ()=>{
         fetchNextPage,
         hasNextPage
       } = useInfiniteQuery(['conversations',token,setConversations], fetchData, {
-        getNextPageParam: (lastPage, pages) => {
-            console.log(pages);
-            console.log("next page number : ",lastPage);        
+        getNextPageParam: (lastPage, pages) => {      
             let nextPage = undefined;
             if(lastPage.number<lastPage.totalPages-1)
                 nextPage = lastPage.number+1;
             return (nextPage)
         },
       });
-      console.log("conversations =======================> ",data);
 
     useEffect(()=>{
         let sock = new SockJS(url);
         let stompClient = Stomp.over(sock);
         stompClient.connect({"Authorization": token},(frame)=>{
-            console.log("connecting to : "+ frame);
             stompClient.subscribe(`/topic/conversation/to/${userId}`
                 ,(response)=>{
                 let data = JSON.parse(response.body);
-                console.log("data from ws===========>");
-                console.log(data);
-                
                 setConversations(prevM=>{return [data,...prevM]});
                 //sleep(50).then(()=>{scroller.scrollTo({top:scroller.scrollHeight,left:0,behavior:'smooth'},document.body.scrollHeight)});
                 }
@@ -98,12 +91,10 @@ const Conversation = ()=>{
             }
             else
                 message.error("nope!!");
-            console.log(response);
             return response});
     }
 
-    
-    console.log("the conversation already created : ",data);
+
     return (
     <>
     <div className="container">

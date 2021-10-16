@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
 import { UserContext } from "../hooks/UserContext";
-import { Affix, message,Badge } from 'antd';
+import { Affix,Badge } from 'antd';
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import properties from "../properties";
@@ -32,7 +32,7 @@ const NavBar = () =>{
               console.log(data);
               
               setNumberOfMessageNotifications(prev=>prev+1);
-              message.success(`you have got a new message from ${data.conversation.title}`)
+              
               //sleep(50).then(()=>{scroller.scrollTo({top:scroller.scrollHeight,left:0,behavior:'smooth'},document.body.scrollHeight)});
               }
           );

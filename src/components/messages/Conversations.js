@@ -35,7 +35,7 @@ const fetchData = async (key)=>{
 const Conversation = ()=>{
     const [cookie,] = useCookies();
     const [conversations,setConversations] = useState([]);
-
+    const [refresh,setRefresh] = useState(false);
     let token = "";
     let userId="";
     if(cookie.ilyToken != null){
@@ -50,7 +50,7 @@ const Conversation = ()=>{
         isLoading,
         fetchNextPage,
         hasNextPage
-      } = useInfiniteQuery(['conversations',token,setConversations], fetchData, {
+      } = useInfiniteQuery(['conversations',token,setConversations,refresh], fetchData, {
         getNextPageParam: (lastPage) => {      
             let nextPage = undefined;
             if(lastPage.number<lastPage.totalPages-1)
@@ -59,6 +59,8 @@ const Conversation = ()=>{
         },
       });
 
+      console.log("what we got from infinite scrolling ", data);
+
     useEffect(()=>{
         let sock = new SockJS(url);
         let stompClient = Stomp.over(sock);
@@ -66,7 +68,12 @@ const Conversation = ()=>{
             stompClient.subscribe(`/topic/conversation/to/${userId}`
                 ,(response)=>{
                 let data = JSON.parse(response.body);
-                setConversations(prevM=>{return [data,...prevM]});
+                console.log("conversation that got the new message ",data);
+                // setConversations(prevM=>{
+                //     return prevM.filter(element => data.id !== element.id).map(element=> element);
+                // });
+                setRefresh(prev=>!prev);
+                //setConversations(prevM=>{return [data.conversation,...prevM]});
                 //sleep(50).then(()=>{scroller.scrollTo({top:scroller.scrollHeight,left:0,behavior:'smooth'},document.body.scrollHeight)});
                 }
             );
@@ -125,15 +132,27 @@ const Conversation = ()=>{
                 </>)
             })}
             </>
-            <>{data.pages.length && data.pages.map((participants)=>{
+            <>{data && data.pages.length && data.pages.map((participants)=>{
                 return participants.content.map((participant,index)=>{
                     return(
                         <>
                         <div key={index} id={`convo${participant.conversation.id}`}>
                         <Space size={2}>
                         <Link className="nav-link" to={`/messages/${participant.conversation.id}`}>
-                            <Avatar>{participant.conversation.title.substring(0,4)}</Avatar>
+                        {participant.lastMessageBeenSeen ? 
+                            <>
+                            <Avatar>
+                                {participant.conversation.title.substring(0,4)}
+                            </Avatar>
                             {participant.conversation.title}
+                            </>
+                        :
+                            <Badge dot={true}>
+                                <Avatar>{participant.conversation.title.substring(0,4)}</Avatar>
+                                {participant.conversation.title}
+                            </Badge>
+                            
+                        }
                         </Link>
                         <Popconfirm title="Sure to delete?" onConfirm={()=>deleteConversationByConversationId(participant.conversation.id)}>
                             <Button type="primary" danger>

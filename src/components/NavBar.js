@@ -32,7 +32,7 @@ const NavBar = () =>{
               console.log(data);
               
               setNumberOfMessageNotifications(prev=>prev+1);
-              message.success(`you have got a new message from ${data.title}`)
+              message.success(`you have got a new message from ${data.conversation.title}`)
               //sleep(50).then(()=>{scroller.scrollTo({top:scroller.scrollHeight,left:0,behavior:'smooth'},document.body.scrollHeight)});
               }
           );
@@ -52,12 +52,23 @@ const NavBar = () =>{
       <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
           <li className="nav-item">
-            <Link className="nav-link active" aria-current="page" to="/">Home</Link>
+            <Link className="nav-link" aria-current="page" to="/">Home</Link>
           </li>
           {!role ? <li className="nav-item"><Link className="nav-link" to="/signup">sign up</Link></li>:""}
-          <li className="nav-item">
-            {!role ? <Link className="nav-link" to="/login">login</Link> : <Link className="nav-link" to="/logout">logout</Link>}
-          </li>
+
+          {role ? 
+          <>
+            
+            <li className="nav-item">
+              
+                <Link className="nav-link" to="/conversations" onClick={()=>setNumberOfMessageNotifications(0)}><Badge count={numberOfMessageNotifications} size="small" offset={[0, 0]}>messages
+              </Badge></Link>
+            </li>
+            
+          </>
+          : ""
+          }
+          
           <li className="nav-item">
           <span className="nav-link">
           {role ? 
@@ -70,18 +81,10 @@ const NavBar = () =>{
           }
           </span> 
           </li>
-          {role ? 
-          <>
-            
-            <li className="nav-item">
-              <Badge count={numberOfMessageNotifications} size="small" offset={[0, 14]}>
-                <Link className="nav-link" to="/conversations" onClick={()=>setNumberOfMessageNotifications(0)}>messages</Link>
-              </Badge>
-            </li>
-            
-          </>
-          : ""
-          }
+          
+          <li className="nav-item">
+            {!role ? <Link className="nav-link" to="/login">login</Link> : <Link className="nav-link" to="/logout">logout</Link>}
+          </li>
           
         </ul>
       </div>

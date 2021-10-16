@@ -4,7 +4,7 @@ import { useInfiniteQuery } from "react-query";
 import SockJS from "sockjs-client";
 import properties from "../../properties";
 import Stomp from "stompjs";
-import { Button, Skeleton } from "antd";
+import { Avatar, Button, Skeleton } from "antd";
 import FormMessages from "./FormMessages";
 import { useParams } from "react-router";
 const {host} = properties;
@@ -49,6 +49,8 @@ const Messages = ()=>{
         },
       });
 
+      console.log("mess ", data);
+
     useEffect(()=>{
         if(id!==undefined){
             let sock = new SockJS(url);
@@ -88,9 +90,14 @@ const Messages = ()=>{
             >
                 <div>{messages && messages.map((message)=>{
                       return(<>{message.sender.id === cookie.principal_id ? 
-                      <div key={message.id} style={{ textAlign:"right" }}><div style={{  background:"#00B2FF",display:"inline-block",color:"white", paddingRight:"1rem", paddingLeft:"1rem",marginTop:"0.5rem"  }}>{message.sender.firstName} : {message.message}</div></div>
+                      <div key={message.id} style={{ textAlign:"right" }}>
+                          <div style={{  background:"#00B2FF",display:"inline-block",color:"white", paddingRight:"1rem", paddingLeft:"1rem",marginTop:"0.5rem"  }}>
+                          {message.sender.firstName} : {message.message}</div>
+                          <Avatar src={cookie.principal_avatar}/>
+                    </div>
                       :
                       <div key={message.id}>
+                          <Avatar alt="avatar" src={`${host}/upload/viewFile/${message.sender.avatar}`}/>
                           <div style={{  background:"#075E54",display:"inline-block",color:"white", paddingRight:"1rem", paddingLeft:"1rem",marginTop:"0.5rem"  }}>
                               {message.sender.firstName} : {message.message}
                             </div>
@@ -108,9 +115,11 @@ const Messages = ()=>{
                                         <div style={{  background:"#00B2FF",display:"inline-block",color:"white", paddingRight:"1rem", paddingLeft:"1rem",marginTop:"0.5rem"  }}>
                                             {message.sender.firstName} : {message.message}
                                         </div>
+                                        <Avatar src={cookie.principal_avatar} alt="avatar"/>
                                     </div>
                                     :
                                     <div key={message.id}>
+                                        <Avatar alt="avatar" src={`${host}/upload/viewFile/${message.sender.avatar}`}/>
                                         <div style={{  background:"#075E54",display:"inline-block",color:"white", paddingRight:"1rem", paddingLeft:"1rem",marginTop:"0.5rem"  }}>
                                             {message.sender.firstName} : {message.message}
                                             </div>

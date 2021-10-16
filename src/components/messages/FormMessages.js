@@ -51,7 +51,7 @@ const FormMessages =({currentConversation,receiver})=>{
     }
 
     return (<>
-        <Form {...layout} name="forum" form={form} onFinish={sendMessage}>
+        <Form {...layout} name="forum" form={form} onFinish={sendMessage} autoComplete='off'>
             <Form.Item
                 label="message"
                 name="message"

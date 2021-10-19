@@ -37,9 +37,6 @@ const ChangePassword = ()=>{
             console.log(response);
             if(response.ok)
                 message.success("password chnaged successfully");
-            else{
-                message.error("something went wrong");
-            }
             setIsButtonLoading(false);
             return response.json();
         }).then(data=>{

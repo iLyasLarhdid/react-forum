@@ -36,11 +36,7 @@ const ForgotPassword = ()=>{
             setIsButtonLoading(false);
             return response.json();
         }).then(data=>{
-            //console.log("data",data);
-            
-        }).catch((err)=>{
-            console.log(err.message);
-            message.success("something went wrong");
+            //console.log("data",data); 
         })
           };
         

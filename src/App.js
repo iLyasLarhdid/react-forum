@@ -15,6 +15,8 @@ const Profile = lazy(()=>import ('./components/Profiles/Profile'));
 const Login = lazy(()=>import ('./components/login'));
 const CommentList = lazy(()=>import ('./components/Comments/CommentList'));
 const Messages = lazy(()=>import ('./components/messages/Messages'));
+const ForgotPassword = lazy(()=>import ('./components/ForgotPassword'));
+const ChangePassword = lazy(()=>import ('./components/ChangePassword'));
 const ProfileSideBar = lazy(()=>import ('./components/Profiles/profileSideBar'));
 
 function App() {
@@ -55,6 +57,16 @@ function App() {
         <Route exact path="/login">
           <Suspense fallback={<div>loading..</div>}>
             <Login/>
+          </Suspense>
+        </Route>
+        <Route exact path="/forgotPassword">
+          <Suspense fallback={<div>loading..</div>}>
+            <ForgotPassword/>
+          </Suspense>
+        </Route>
+        <Route exact path="/changePassword/:emailToken">
+          <Suspense fallback={<div>loading..</div>}>
+            <ChangePassword/>
           </Suspense>
         </Route>
         <Route exact path="/logout">

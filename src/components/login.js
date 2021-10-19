@@ -107,13 +107,13 @@ const Login = ()=>{
             >
                 <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} />
             </Form.Item>
-
+            
             <Form.Item>
                 {isButtonLoading ? <Button type="primary" loading disabled>Loading</Button>:<Button type="primary" htmlType="submit">Login</Button>}
             </Form.Item>
             </Form>
             </div>  
-
+            <span>you forgot password ? <Link to="/forgotPassword">get Password</Link></span>
 
                 
             </div>

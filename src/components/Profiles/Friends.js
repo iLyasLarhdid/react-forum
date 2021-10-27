@@ -4,6 +4,8 @@ import { useInfiniteQuery } from "react-query";
 import properties from "../../properties";
 import { useCookies } from "react-cookie";
 import { useHistory, useParams } from "react-router";
+import InfiniteScroll from "react-infinite-scroller";
+import { Skeleton } from "antd";
 
 const {host} = properties;
 //const url = `${host}/api/v1/users/page/0`;
@@ -67,16 +69,23 @@ const Friends = ()=>{
     && <b>{data.pages[0].content[0].sender.firstName} {data.pages[0].content[0].sender.lastName}'s friends</b>}
 
     {data &&
-        data.pages.map((page)=>{
-            return page.content.map((friendship)=>{
-                return (id === friendship.sender.id ? <div>
-                    <Avatar src={`${host}/upload/viewFile/${friendship.receiver.avatar}`}>{friendship.receiver.firstName}</Avatar> <b><Link to={`/profile/${friendship.receiver.id}`}>{friendship.receiver.firstName} {friendship.receiver.lastName}</Link></b> 
-                    </div>:<div>
-                    <Avatar src={`${host}/upload/viewFile/${friendship.sender.avatar}`}>{friendship.sender.firstName}</Avatar> <b><Link to={`/profile/${friendship.sender.id}`}>{friendship.sender.firstName} {friendship.sender.lastName}</Link></b> 
-                    </div>)
-            })
-            
+    <InfiniteScroll
+    pageStart={0}
+    loadMore={fetchNextPage}
+    hasMore={hasNextPage}
+    loader={<div className="loader" key={1}><Skeleton/></div>}
+    >
+        {data.pages.map((page)=>{
+        return page.content.map((friendship)=>{
+            return (id === friendship.sender.id ? <div>
+                <Avatar src={`${host}/upload/viewFile/${friendship.receiver.avatar}`}>{friendship.receiver.firstName}</Avatar> <b><Link to={`/profile/${friendship.receiver.id}`}>{friendship.receiver.firstName} {friendship.receiver.lastName}</Link></b> 
+                </div>:<div>
+                <Avatar src={`${host}/upload/viewFile/${friendship.sender.avatar}`}>{friendship.sender.firstName}</Avatar> <b><Link to={`/profile/${friendship.sender.id}`}>{friendship.sender.firstName} {friendship.sender.lastName}</Link></b> 
+                </div>)
         })
+        
+    })}
+    </InfiniteScroll> 
     }
     </div>
     {hasNextPage && <div>has next page</div>}

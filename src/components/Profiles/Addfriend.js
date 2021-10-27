@@ -20,9 +20,7 @@ const fetchData = async (key)=>{
 
 const AddFriend = ({profileData})=>{
     const [isRequested, setIsRequested] = useState(false);
-    const [fileList, setFileList] = useState([]);
-    const [showUploadField,setShowUploadField] = useState(false);
-    const [cookie,setCookie] = useCookies([]);
+    const [cookie,] = useCookies([]);
 
     const {data,isLoading,error} = useQuery(['forums',cookie.ilyToken,profileData.id],fetchData,{keepPreviousData:true});
 
@@ -118,6 +116,8 @@ const AddFriend = ({profileData})=>{
     }
 
     return (<>
+        {isLoading && <div>Loading ...</div>}
+        {error && <div>error</div>}
         <div>
             {profileData.id !== cookie.principal_id && data && data.accepted === undefined && !isRequested &&
             <Button type="link" onClick={()=>addFriend()}>Add Friend</Button>}

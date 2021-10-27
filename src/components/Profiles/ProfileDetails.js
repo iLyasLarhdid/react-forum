@@ -7,6 +7,7 @@ import { CommentOutlined } from '@ant-design/icons';
 import { useInfiniteQuery } from "react-query";
 import InfiniteScroll from "react-infinite-scroller";
 import { Link } from "react-router-dom";
+import AddFriend from "./Addfriend";
 const Posts = lazy(()=>import ('../Posts/Posts'));
 
 const {host,avatarProp} = properties;
@@ -34,7 +35,7 @@ const ProfileDetails = ({profile})=>{
     const [showUploadButton, setShowUploadButton] = useState(false);
     const [fileList, setFileList] = useState([]);
     const [showUploadField,setShowUploadField] = useState(false);
-    const [cookie,setCookie] = useCookies();
+    const [cookie,setCookie] = useCookies([]);
     const [profileData,] = useState(profile);
 
     const {
@@ -100,9 +101,9 @@ const ProfileDetails = ({profile})=>{
         }).then(data=>{
             console.log("upload=>");
             console.log(data);
-            setCookie("principal_avatar",data.fileUri);
             message.success({content:'Updated successfully', key:"updating", duration:2});
             //const index = JSON.stringify(data);
+            setCookie("principal_avatar",data.fileUri,{path:"/",maxAge:604800});
             setFileList([]);
             setShowUploadField(false);
             setShowUploadButton(false);
@@ -114,6 +115,8 @@ const ProfileDetails = ({profile})=>{
             message.error({content:err, key:"updating", duration:2});
         });
     }
+
+    
 
     console.log("inside profile details and the data is :",profileData);
     return(
@@ -158,6 +161,8 @@ const ProfileDetails = ({profile})=>{
             <div>
             {profileData.id === cookie.principal_id && <Tooltip key="comment-basic-like" title="click to change avatar"><Button type="link" onClick={()=>setShowUploadField(!showUploadField)}>upload picture </Button></Tooltip>}
             </div>
+            {/* Component for adding friends */}
+            <AddFriend profileData={profileData}/>
 
             <div><b>{profileData.firstName} {profileData.lastName}</b></div>
             <div>{profileData.email}</div>

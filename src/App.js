@@ -17,7 +17,7 @@ const CommentList = lazy(()=>import ('./components/Comments/CommentList'));
 const Messages = lazy(()=>import ('./components/messages/Messages'));
 const ForgotPassword = lazy(()=>import ('./components/ForgotPassword'));
 const ChangePassword = lazy(()=>import ('./components/ChangePassword'));
-const ProfileSideBar = lazy(()=>import ('./components/Profiles/profileSideBar'));
+const Friends = lazy(()=>import ('./components/Profiles/Friends'));
 
 function App() {
   const [cookies,] = useCookies([]);
@@ -81,7 +81,7 @@ function App() {
         </Route>
         <Route exact path="/friends/:id">
           <Suspense fallback={<div>loading..</div>}>
-            <ProfileSideBar/>
+            <Friends/>
           </Suspense>
         </Route>
         <Route exact path="/conversations">

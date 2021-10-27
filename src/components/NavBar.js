@@ -61,7 +61,7 @@ const NavBar = () =>{
             
             <li className="nav-item">
               
-                <Link className="nav-link" to="/conversations" onClick={()=>setNumberOfMessageNotifications(0)}><Badge count={numberOfMessageNotifications} size="small" offset={[0, 0]}>messages
+                <Link className="nav-link" to="/conversations" onClick={()=>setNumberOfMessageNotifications(0)}>messages<Badge count={numberOfMessageNotifications} size="small" offset={[0, 0]}>
               </Badge></Link>
             </li>
             

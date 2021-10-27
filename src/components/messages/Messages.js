@@ -7,6 +7,7 @@ import Stomp from "stompjs";
 import { Avatar, Button, Skeleton } from "antd";
 import FormMessages from "./FormMessages";
 import { useParams } from "react-router";
+import { Link } from "react-router-dom";
 const {host} = properties;
 
 const fetchData = async (key)=>{
@@ -93,11 +94,15 @@ const Messages = ()=>{
                       <div key={message.id} style={{ textAlign:"right" }}>
                           <div style={{  background:"#00B2FF",display:"inline-block",color:"white", paddingRight:"1rem", paddingLeft:"1rem",marginTop:"0.5rem"  }}>
                           {message.sender.firstName} : {message.message}</div>
-                          <Avatar src={cookie.principal_avatar}/>
+                          <Link to={`/profile/${cookie.principal_id}`}>
+                              <Avatar src={cookie.principal_avatar}/>
+                            </Link>
                     </div>
                       :
                       <div key={message.id}>
-                          <Avatar alt="avatar" src={`${host}/upload/viewFile/${message.sender.avatar}`}/>
+                          <Link to={`/profile/${message.sender.id}`}>
+                              <Avatar alt="avatar" src={`${host}/upload/viewFile/${message.sender.avatar}`}/>
+                            </Link>
                           <div style={{  background:"#075E54",display:"inline-block",color:"white", paddingRight:"1rem", paddingLeft:"1rem",marginTop:"0.5rem"  }}>
                               {message.sender.firstName} : {message.message}
                             </div>
@@ -112,14 +117,21 @@ const Messages = ()=>{
                               return(
                                 <>{message.sender.id === cookie.principal_id ? 
                                     <div key={message.id} style={{ textAlign:"right"}}>
-                                        <div style={{  background:"#00B2FF",display:"inline-block",color:"white", paddingRight:"1rem", paddingLeft:"1rem",marginTop:"0.5rem"  }}>
+                                        <div style={{  background:"#00B2FF",display:"inline-block",color:"white", paddingRight:"1rem", paddingLeft:"1rem",marginTop:"0.5rem"  }}
+                                        >
                                             {message.sender.firstName} : {message.message}
                                         </div>
-                                        <Avatar src={cookie.principal_avatar} alt="avatar"/>
+                                        <div style={{ display:"inline-block" }}>
+                                        <Link to={`/profile/${cookie.principal_id}`}>
+                                            <Avatar src={cookie.principal_avatar} alt="avatar"/>
+                                        </Link>
+                                        </div>
                                     </div>
                                     :
                                     <div key={message.id}>
-                                        <Avatar alt="avatar" src={`${host}/upload/viewFile/${message.sender.avatar}`}/>
+                                        <Link to={`/profile/${message.sender.id}`}>
+                                            <Avatar alt="avatar" src={`${host}/upload/viewFile/${message.sender.avatar}`}/>
+                                        </Link>
                                         <div style={{  background:"#075E54",display:"inline-block",color:"white", paddingRight:"1rem", paddingLeft:"1rem",marginTop:"0.5rem"  }}>
                                             {message.sender.firstName} : {message.message}
                                             </div>

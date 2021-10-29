@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import properties from "../../properties";
 import { Button,message, Skeleton } from 'antd';
-import { useInfiniteQuery, useQuery } from "react-query";
+import { useInfiniteQuery } from "react-query";
 import { Link } from "react-router-dom";
 
 const {host} = properties;
@@ -39,9 +39,7 @@ const FriendRequest =()=>{
 
     const {
         data,
-        isLoading,
-        fetchNextPage,
-        hasNextPage
+        isLoading
       } = useInfiniteQuery(['posts',0,token,getFriendRequests], fetchData, {
         getNextPageParam: (lastPage, pages) => {
             console.log(pages);

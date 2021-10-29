@@ -59,11 +59,16 @@ const NavBar = () =>{
           {role ? 
           <>
             
+            <>
             <li className="nav-item">
               
                 <Link className="nav-link" to="/conversations" onClick={()=>setNumberOfMessageNotifications(0)}>messages<Badge count={numberOfMessageNotifications} size="small" offset={[0, 0]}>
               </Badge></Link>
             </li>
+            <li className="nav-item">
+                <Link className="nav-link" to="/friendRequest">friends</Link>
+            </li>
+            </>
             
           </>
           : ""
@@ -85,6 +90,7 @@ const NavBar = () =>{
           <li className="nav-item">
             {!role ? <Link className="nav-link" to="/login">login</Link> : <Link className="nav-link" to="/logout">logout</Link>}
           </li>
+          
           
         </ul>
       </div>

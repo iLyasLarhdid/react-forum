@@ -18,6 +18,8 @@ const Messages = lazy(()=>import ('./components/messages/Messages'));
 const ForgotPassword = lazy(()=>import ('./components/ForgotPassword'));
 const ChangePassword = lazy(()=>import ('./components/ChangePassword'));
 const Friends = lazy(()=>import ('./components/Profiles/Friends'));
+const FriendRequest = lazy(()=>import ('./components/Profiles/FriendRequest'));
+
 
 function App() {
   const [cookies,] = useCookies([]);
@@ -82,6 +84,11 @@ function App() {
         <Route exact path="/friends/:id">
           <Suspense fallback={<div>loading..</div>}>
             <Friends/>
+          </Suspense>
+        </Route>
+        <Route exact path="/friendRequest">
+          <Suspense fallback={<div>loading..</div>}>
+            <FriendRequest/>
           </Suspense>
         </Route>
         <Route exact path="/conversations">

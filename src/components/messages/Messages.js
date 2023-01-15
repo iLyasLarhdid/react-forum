@@ -54,24 +54,27 @@ const Messages = ()=>{
 
     useEffect(()=>{
         if(id!==undefined){
-            let sock = new SockJS(url);
-            let stompClient = Stomp.over(sock);
-            
+            const sock = new SockJS(url);
+            const stompClient = Stomp.over(sock);
+            stompClient.reconnect_delay=5000;
             stompClient.connect({"Authorization": cookie.ilyToken},(frame)=>{
                 stompClient.subscribe(`/queue/to/${id}`
                     ,(response)=>{
-                    let data = JSON.parse(response.body);
-                    if(id===data.conversation.id)
-                    setMessages(prevM=>{return [...prevM,data]});
-                    },{id:`${id}`}
+                        console.log("recieved d",response);
+                        let data = JSON.parse(response.body);
+                        if(id===data.conversation.id)
+                            setMessages(prevM=>{return [...prevM,data]});
+                    },{}
                 );
             })
+            
           }
     },[cookie.ilyToken,url,id]);
 
     useEffect(()=>{
         setMessages([]);
     },[data]);
+
 
       return (
           <>

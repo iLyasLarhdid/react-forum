@@ -1,7 +1,9 @@
 import { Button, Form, Input } from "antd";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCookies } from "react-cookie";
+import SockJS from "sockjs-client";
 import properties from "../../properties";
+import Stomp from "stompjs";
 
 const layout = {
     wrapperCol: {
@@ -14,40 +16,65 @@ const FormMessages =({currentConversation,receiver})=>{
     const [isButtonLoading, setIsButtonLoading] = useState(false);
     const {host} = properties;
     const [cookie,] = useCookies();
+    const emailInput = useRef(null);
 
+    let token = "";
+    let userId="";
+    if(cookie.ilyToken != null){
+        token = cookie.ilyToken;
+        userId = cookie.principal_id;
+    }
+    useEffect(() => {
+        if (emailInput.current) {
+          emailInput.current.focus();
+        }
+      }, []);
+    
     const sendMessage = (values)=>{
         if(values.message.length<1){
             return
         }
+        const url = `${host}/ws`;
+        const sock = new SockJS(url);
+        const stompClient = Stomp.over(sock);
+        stompClient.reconnect_delay = 5000;
+        
         console.log(values);
-        setIsButtonLoading(true);
-        const url = `${host}/api/v1/messages`;
+        //setIsButtonLoading(true);
+        //const url = `${host}/api/v1/messages`;
         const message = values.message;
         const conversationId = currentConversation;
-        form.resetFields();
-        fetch(url,{
-            method:'POST',
-            headers:{
-                'Content-Type' : 'application/json',
-                'Authorization': cookie.ilyToken
-            },
-            body:JSON.stringify({message,receiver,conversationId})
-        })
-        .then(response=>{
-            if(!response.ok){
-                throw Error("something went wrong!");
-            }
-            return response.json();
-        })
-        .then(data=>{
-            console.log(data);
-            setIsButtonLoading(false);
-        }).catch((err)=>{
-            console.log(err);
-            setIsButtonLoading(false);
-        });
         
+        stompClient.connect({"Authorization": cookie.ilyToken},(frame)=>{
+            stompClient.send(`/app/message`, {}, JSON.stringify({message,receiver,conversationId}));
+        })
+        //stompClient.send(`/app/message`, {}, JSON.stringify({message,receiver,conversationId}));
 
+        form.resetFields();
+        // fetch(url,{
+        //     method:'POST',
+        //     headers:{
+        //         'Content-Type' : 'application/json',
+        //         'Authorization': cookie.ilyToken
+        //     },
+        //     body:JSON.stringify({message,receiver,conversationId})
+        // })
+        // .then(response=>{
+        //     if(!response.ok){
+        //         throw Error("something went wrong!");
+        //     }
+        //     return response.json();
+        // })
+        // .then(data=>{
+        //     console.log(data);
+        //     setIsButtonLoading(false);
+        // }).catch((err)=>{
+        //     console.log(err);
+        //     setIsButtonLoading(false);
+        // });
+        if (emailInput.current) {
+            emailInput.current.focus();
+        }
     }
 
     return (<>
@@ -57,7 +84,7 @@ const FormMessages =({currentConversation,receiver})=>{
                 name="message"
                 rules={[{ required: true, message: 'Please add message!' }]}
             >
-                <Input/>
+                <Input ref={emailInput}/>
             </Form.Item>
             <Form.Item>
                 {isButtonLoading ? 

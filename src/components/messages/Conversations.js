@@ -36,6 +36,12 @@ const Conversation = ()=>{
     const [cookie,] = useCookies();
     const [conversations,setConversations] = useState([]);
     const [refresh,setRefresh] = useState(false);
+    
+    const url = `${host}/ws`;
+    const sock = new SockJS(url);
+    const stompClient = Stomp.over(sock);
+    stompClient.reconnect_delay = 5000;
+
     let token = "";
     let userId="";
     if(cookie.ilyToken != null){
@@ -43,8 +49,6 @@ const Conversation = ()=>{
         userId = cookie.principal_id;
     }
 
-    
-    const url = `${host}/ws`;
     const {
         data,
         isLoading,
@@ -62,8 +66,6 @@ const Conversation = ()=>{
       console.log("what we got from infinite scrolling ", data);
 
     useEffect(()=>{
-        let sock = new SockJS(url);
-        let stompClient = Stomp.over(sock);
         stompClient.connect({"Authorization": token},(frame)=>{
             stompClient.subscribe(`/topic/conversation/to/${userId}`
                 ,(response)=>{
@@ -75,11 +77,14 @@ const Conversation = ()=>{
                 setRefresh(prev=>!prev);
                 //setConversations(prevM=>{return [data.conversation,...prevM]});
                 //sleep(50).then(()=>{scroller.scrollTo({top:scroller.scrollHeight,left:0,behavior:'smooth'},document.body.scrollHeight)});
-                }
+                },{"Authorization": token}
             );
+            //stompClient.send(`/app/message`, {"Authorization": token}, JSON.stringify({message:"hello",receiver:"",conversationId:"2c929f517cad1a79017cad1c801a0002"}));
+        }, (error) => {
+            console.log("jhhhhhhhhhhhhhhhhhhhhhh",error)
         })
-    },[token,userId,url])
-      
+    },[token,userId,stompClient,url])
+
     const deleteConversationByConversationId = (id)=>{
         const url = `${host}/api/v1/conversations`;
         fetch(url,{

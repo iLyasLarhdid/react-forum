@@ -1,5 +1,5 @@
 import { Button, Form, Input } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useCookies } from "react-cookie";
 import SockJS from "sockjs-client";
 import properties from "../../properties";
@@ -13,17 +13,11 @@ const layout = {
 
 const FormMessages =({currentConversation,receiver})=>{
     const [form] = Form.useForm();
-    const [isButtonLoading, setIsButtonLoading] = useState(false);
     const {host} = properties;
     const [cookie,] = useCookies();
     const emailInput = useRef(null);
 
-    let token = "";
-    let userId="";
-    if(cookie.ilyToken != null){
-        token = cookie.ilyToken;
-        userId = cookie.principal_id;
-    }
+    
     useEffect(() => {
         if (emailInput.current) {
           emailInput.current.focus();
@@ -87,10 +81,7 @@ const FormMessages =({currentConversation,receiver})=>{
                 <Input ref={emailInput}/>
             </Form.Item>
             <Form.Item>
-                {isButtonLoading ? 
-                    <Button type="primary" loading disabled>Loading</Button>
-                :
-                    <Button type="primary" htmlType="submit">submit</Button>}
+                <Button type="primary" htmlType="submit">submit</Button>
             </Form.Item>
         </Form>
     </>);

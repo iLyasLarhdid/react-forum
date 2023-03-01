@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import properties from "../../properties";
-import { Button,message, Skeleton } from 'antd';
+import { Button,Card,message, Skeleton } from 'antd';
 import { useInfiniteQuery } from "react-query";
 import { Link } from "react-router-dom";
 
 const {host} = properties;
-const fetchData = async (key)=>{
+const fetchFriendRequests = async (key)=>{
     const page = key.queryKey[1];
     const token = key.queryKey[2];
     const getFriendRequests = key.queryKey[3];
@@ -18,7 +18,48 @@ const fetchData = async (key)=>{
     } );
     return res.json();
 }
-
+// const fetchFriends = async (key)=>{
+//     const page = key.queryKey[1];
+//     const token = key.queryKey[2];
+//     const getFriendRequests = key.queryKey[3];
+//     const res = await fetch(`${host}/api/v1/friendships/${getFriendRequests}/page/${page}`,{
+//         headers: {
+//             'Content-Type' : 'application/json',
+//             'Authorization': token
+//         }
+//     } );
+//     return res.json();
+// }
+// const searchFriends = async (key)=>{
+//     const page = key.queryKey[1];
+//     const token = key.queryKey[2];
+//     const getFriendRequests = key.queryKey[3];
+//     const res = await fetch(`${host}/api/v1/friendships/${getFriendRequests}/page/${page}`,{
+//         headers: {
+//             'Content-Type' : 'application/json',
+//             'Authorization': token
+//         }
+//     } );
+//     return res.json();
+// }
+const tabListNoTitle = [
+    {
+      key: 'friends',
+      tab: 'Friends',
+    },
+    {
+      key: 'ffriends',
+      tab: 'Find Friends',
+    },
+    {
+      key: 'frequests',
+      tab: 'Friend Requests',
+    },
+    {
+      key: 'ucfriendRequests',
+      tab: 'Upcoming friend requests',
+    },
+  ];
 const FriendRequest =()=>{
     const [cookie,] = useCookies([]);
     const [isSentFriendRequests, setIsSentFriendrequests] = useState(false);
@@ -40,7 +81,7 @@ const FriendRequest =()=>{
     const {
         data,
         isLoading
-      } = useInfiniteQuery(['posts',0,token,getFriendRequests], fetchData, {
+      } = useInfiniteQuery(['posts',0,token,getFriendRequests], fetchFriendRequests, {
         getNextPageParam: (lastPage, pages) => {
             console.log(pages);
             console.log("next page number : ",lastPage);        
@@ -108,7 +149,28 @@ const FriendRequest =()=>{
 
     console.log("my friend requests are ",data);
 
+    const [activeTabKey2, setActiveTabKey2] = useState('app');
+    const onTab2Change = (key) => {
+        setActiveTabKey2(key);
+    };
+    const contentListNoTitle = {
+        friends: <p>Friends will be shown here soon (still working on it)</p>,
+        ffriends: <p>article content</p>,
+        frequests: <p>app content</p>,
+        ucfriendRequests: <p>project content</p>,
+      };
+    
     return(<>
+        <Card
+            style={{
+            width: '100%',
+            }}
+            tabList={tabListNoTitle}
+            activeTabKey={activeTabKey2}
+            onTabChange={onTab2Change}
+        >
+            {contentListNoTitle[activeTabKey2]}
+        </Card>
         <div className="container">
             <h3>Friend requests</h3>
             {isLoading && <><Skeleton/><Skeleton/></>}
